@@ -8,6 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+
+//TODO
+// If you land on top after gravity, kill auto
+// Fix Step usage
+// Add key and lock
+// Add doors
+
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();

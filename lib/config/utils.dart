@@ -52,14 +52,14 @@ class Utils {
   }
 
   // Is the position where piece will be moved TO valid?
-  static bool isPieceDestinationValid(List<List<EnumBoardPiece>> board, ModelPosition endPosition) {
+  static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
     // Within bounds and empty or black piece or Step
-    return endPosition.isWithinBounds() && (board[endPosition.y][endPosition.x].isEmpty() || board[endPosition.y][endPosition.x].isPieceBlack() || board[endPosition.y][endPosition.x].isStep());
+    return endPosition.isWithinBounds() && (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep());
   }
 
   //All possible moves of a piece
-  static List<ModelPosition> getPossibleMove(List<List<EnumBoardPiece>> board, ModelPosition position) {
-    EnumBoardPiece piece = board[position.y][position.x];
+  static List<ModelPosition> getPossibleMove(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
+    EnumBoardPiece piece = board[position.y][position.x][0];
     List<ModelPosition> toReturn = [];
     switch (piece) {
       case EnumBoardPiece.blank:
@@ -132,29 +132,33 @@ class Utils {
     }
   }
 
-  static List<List<EnumBoardPiece>> convertBoard(List<List<int>> board) {
-    final translatedBoard = List<List<EnumBoardPiece>>.generate(Constants.numVerticalBoxes, (index) => List<EnumBoardPiece>.generate(Constants.numHorizontalBoxes, (index) => EnumBoardPiece.blank));
+  static List<List<List<EnumBoardPiece>>> convertBoard(List<List<List<int>>> board) {
+    final translatedBoard = List<List<List<EnumBoardPiece>>>.generate(Constants.numVerticalBoxes, (index) => List<List<EnumBoardPiece>>.generate(Constants.numHorizontalBoxes, (index) => []));
 
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
-        translatedBoard[i][j] = EnumBoardPiece.values[board[i][j]];
+        for (int k = 0; k < board[i][j].length; k++) {
+          translatedBoard[i][j].add(EnumBoardPiece.values[board[i][j][k]]);
+        }
       }
     }
     return translatedBoard;
   }
 
-  static List<List<int>> convertBoardToRaw(List<List<EnumBoardPiece>> board) {
-    final translatedBoard = List<List<int>>.generate(Constants.numVerticalBoxes, (index) => List<int>.generate(Constants.numHorizontalBoxes, (index) => 0));
+  static List<List<List<int>>> convertBoardToRaw(List<List<List<EnumBoardPiece>>> board) {
+    final translatedBoard = List<List<List<int>>>.generate(Constants.numVerticalBoxes, (index) => List<List<int>>.generate(Constants.numHorizontalBoxes, (index) => []));
 
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
-        translatedBoard[i][j] = EnumBoardPiece.values.indexOf(board[i][j]);
+        for (int k = 0; k < board[i][j].length; k++) {
+          translatedBoard[i][j].add(EnumBoardPiece.values.indexOf(board[i][j][k])) ;
+        }
       }
     }
     return translatedBoard;
   }
 
-  static List<ModelPosition> getPossibleStraights(List<List<EnumBoardPiece>> board, ModelPosition position) {
+  static List<ModelPosition> getPossibleStraights(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
     List<ModelPosition> toReturn = [];
     //Left all the way
     for (int i = position.x - 1; i != -1; i--) {
@@ -205,7 +209,7 @@ class Utils {
     return toReturn;
   }
 
-  static List<ModelPosition> getPossibleDiagonals(List<List<EnumBoardPiece>> board, ModelPosition position) {
+  static List<ModelPosition> getPossibleDiagonals(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
     List<ModelPosition> toReturn = [];
     //Bottom right
     for (int i = position.x + 1, j = position.y + 1; i != Constants.numHorizontalBoxes && j != 10; i++, j++) {

@@ -26,6 +26,7 @@ class Board extends StatelessWidget {
         children: [
           //Settings
           Align(
+            alignment: Alignment.centerLeft,
             child: Container(
                 height: screenSize.height,
                 width: (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) / 2,
@@ -61,7 +62,6 @@ class Board extends StatelessWidget {
                     ),
                   ],
                 )),
-            alignment: Alignment.centerLeft,
           ),
           //Levels
           Align(
@@ -115,7 +115,7 @@ class Board extends StatelessWidget {
                           return Cell(
                             key: context.read<ProvGame>().boardKeys[ind][index],
                             index: index + (ind * Constants.numHorizontalBoxes),
-                            item: game.board[ind][index],
+                            cellContent: game.board[ind][index],
                             onTap: () {
                               context.read<ProvGame>().onCellTapped(index, ind, context);
                             },

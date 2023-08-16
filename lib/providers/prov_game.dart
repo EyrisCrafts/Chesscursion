@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class ProvGame extends ChangeNotifier {
-  List<List<EnumBoardPiece>> board = [];
+  List<List<List<EnumBoardPiece>>> board = [];
   late SelectedPiece selectedPiece;
   List<List<GlobalKey>> boardKeys = [];
   late int currentLevel;
@@ -25,7 +25,7 @@ class ProvGame extends ChangeNotifier {
 
   void onCellTapped(int x, int y, BuildContext context) {
     if (GetIt.I<ProvCreator>().isCreatorMode) {
-      board[y][x] = GetIt.I<ProvCreator>().selectedPiece!;
+      board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
       notifyListeners();
       return;
     }
@@ -33,19 +33,19 @@ class ProvGame extends ChangeNotifier {
     if (selectedPiece.isSelected) {
       if (Utils.getPossibleMove(board, selectedPiece.position!).contains(ModelPosition(x, y))) {
         ModelPosition finalDestination = ModelPosition(x, y);
-        if (board[y][x].isStep()) {
+        if (board[y][x][0].isStep()) {
           finalDestination = ModelPosition(x, y - 1);
         }
 
         // if destination is not a black piece, play move sound
-        if (!board[finalDestination.y][finalDestination.x].isPieceBlack()) {
+        if (!board[finalDestination.y][finalDestination.x][0].isPieceBlack()) {
           audioPlayMove();
         } else {
           audioPlayMove(isKill: true);
         }
         // If new place has a step, move on top of it
-        board[selectedPiece.position!.y][selectedPiece.position!.x] = EnumBoardPiece.blank;
-        board[finalDestination.y][finalDestination.x] = selectedPiece.selectedPiece!;
+        board[selectedPiece.position!.y][selectedPiece.position!.x][0] = EnumBoardPiece.blank;
+        board[finalDestination.y][finalDestination.x][0] = selectedPiece.selectedPiece!;
 
         notifyListeners();
 
@@ -53,11 +53,18 @@ class ProvGame extends ChangeNotifier {
         winCheckCondition(context);
 
         //Gravity Check !
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
           for (int my = 0; my < 10; my++) {
             for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
-              if (!board[my][mx].isEmpty() && !board[my][mx].isBlock() && !board[my][mx].isStep()) {
-                gravitycheck(context, ModelPosition(mx, my));
+              if (!board[my][mx][0].isEmpty() && !board[my][mx][0].isBlock() && !board[my][mx][0].isStep()) {
+                final ModelPosition newPosition = await gravitycheck(context, ModelPosition(mx, my));
+                  if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
+                    selectedPiece.isSelected = true;
+                    selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
+                    selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
+
+                    updateSuggestions();
+                  }
               }
             }
           }
@@ -66,9 +73,9 @@ class ProvGame extends ChangeNotifier {
       selectedPiece.isSelected = false;
       removeSuggestions();
     } else {
-      if (board[y][x].isPieceWhite()) {
+      if (board[y][x][0].isPieceWhite()) {
         selectedPiece.isSelected = true;
-        selectedPiece.selectedPiece = board[y][x];
+        selectedPiece.selectedPiece = board[y][x][0];
         selectedPiece.position = ModelPosition(x, y);
 
         updateSuggestions();
@@ -79,12 +86,12 @@ class ProvGame extends ChangeNotifier {
   void setLevel(int level) {
     if (level == LocalData.levels.length) level = 0;
     currentLevel = level;
-    board = convertBoard(LocalData.levels[level].map((element) => List<int>.from(element)).toList());
+    board = Utils.convertBoard(LocalData.levels[level].map((element) => List<List<int>>.from(element)).toList());
     selectedPiece.isSelected = false;
     notifyListeners();
   }
 
-  void setBoard(List<List<EnumBoardPiece>> newBoard) {
+  void setBoard(List<List<List<EnumBoardPiece>>> newBoard) {
     board = newBoard;
     selectedPiece.isSelected = false;
     notifyListeners();
@@ -93,7 +100,7 @@ class ProvGame extends ChangeNotifier {
   bool blackExists() {
     for (int my = 0; my < 10; my++) {
       for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
-        if (board[my][mx].isPieceBlack()) {
+        if (board[my][mx][0].isPieceBlack()) {
           return true;
         }
       }
@@ -113,21 +120,21 @@ class ProvGame extends ChangeNotifier {
     }
   }
 
-  void gravitycheck(
+  Future<ModelPosition> gravitycheck(
     BuildContext context,
     ModelPosition endPos,
-  ) {
+  ) async {
     //If piece has empty below
-    if (!(endPos.y + 1 != 10 && board[endPos.y + 1][endPos.x].isEmpty())) {
-      return;
+    if (!(endPos.y + 1 != 10 && board[endPos.y + 1][endPos.x][0].isEmpty())) {
+      return endPos;
     }
     //Get old piece
-    EnumBoardPiece piece = board[endPos.y][endPos.x];
-    board[endPos.y][endPos.x] = EnumBoardPiece.blank;
+    EnumBoardPiece piece = board[endPos.y][endPos.x][0];
+    board[endPos.y][endPos.x][0] = EnumBoardPiece.blank;
     notifyListeners();
     //Calculat the last position
     int newY = endPos.y + 1;
-    while (newY + 1 != 10 && board[newY + 1][endPos.x].isEmpty()) {
+    while (newY + 1 != 10 && board[newY + 1][endPos.x][0].isEmpty()) {
       newY++;
     }
     if (newY == 10) newY--;
@@ -140,12 +147,13 @@ class ProvGame extends ChangeNotifier {
             ));
     Overlay.of(context).insert(entry);
     isMoveAnimationInProgress = true;
-    Future.delayed(const Duration(milliseconds: 599), () {
+    await Future.delayed(const Duration(milliseconds: 599), () {
       isMoveAnimationInProgress = false;
-      board[newY][endPos.x] = piece;
+      board[newY][endPos.x][0] = piece;
       notifyListeners();
       entry.remove();
     });
+    return ModelPosition(endPos.x, newY);
   }
 
   bool isMoveAnimationInProgress = false;
@@ -153,9 +161,10 @@ class ProvGame extends ChangeNotifier {
   void removeSuggestions() {
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
-        if (board[i][j].isSuggested()) {
-          board[i][j] = EnumBoardPiece.blank;
-        }
+        board[i][j].removeWhere((element) => element == EnumBoardPiece.suggested);
+        // if (board[i][j][0].isSuggested()) {
+        //   board[i][j][0] = EnumBoardPiece.blank;
+        // }
       }
     }
     notifyListeners();
@@ -164,7 +173,8 @@ class ProvGame extends ChangeNotifier {
   void updateSuggestions() {
     List<ModelPosition> possibles = Utils.getPossibleMove(board, selectedPiece.position!);
     for (ModelPosition pos in possibles) {
-      if (board[pos.y][pos.x].isEmpty()) board[pos.y][pos.x] = EnumBoardPiece.suggested;
+      // if (board[pos.y][pos.x][0].isEmpty()) board[pos.y][pos.x][0] = EnumBoardPiece.suggested;
+      board[pos.y][pos.x].add(EnumBoardPiece.suggested);
     }
     notifyListeners();
   }
@@ -206,18 +216,6 @@ class ProvGame extends ChangeNotifier {
     });
     //Load the Game
     currentLevel = 0;
-    board = convertBoard(LocalData.levels.first.map((element) => List<int>.from(element)).toList());
-    // board = LocalData.levels.first.map((element) => List<int>.from(element)).toList();
-  }
-
-  List<List<EnumBoardPiece>> convertBoard(List<List<int>> board) {
-    final translatedBoard = List<List<EnumBoardPiece>>.generate(Constants.numVerticalBoxes, (index) => List<EnumBoardPiece>.generate(Constants.numHorizontalBoxes, (index) => EnumBoardPiece.blank));
-
-    for (int i = 0; i < Constants.numVerticalBoxes; i++) {
-      for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
-        translatedBoard[i][j] = EnumBoardPiece.values[board[i][j]];
-      }
-    }
-    return translatedBoard;
+    board = Utils.convertBoard(LocalData.levels.first.map((element) => List<List<int>>.from(element)).toList());
   }
 }

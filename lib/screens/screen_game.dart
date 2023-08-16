@@ -1,5 +1,4 @@
 import 'package:chesscursion_creator/config/enums.dart';
-import 'package:chesscursion_creator/models/selected_piece.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
@@ -49,10 +48,9 @@ class _ScreenGameState extends State<ScreenGame> {
                             return Cell(
                               key: ValueKey(index),
                               index: provCreator.selectedPiece == EnumBoardPiece.values[index] ? 1 : 0,
-                              item: EnumBoardPiece.values[index],
+                              cellContent: [EnumBoardPiece.values[index]],
                               onTap: () {
                                 // Make it selected
-
                                 GetIt.I<ProvCreator>().selectPiece(EnumBoardPiece.values[index]);
                               },
                             );
