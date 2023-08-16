@@ -1,0 +1,18 @@
+enum EnumBoardPiece {
+  blank,
+  block,
+  suggested,
+  whiteKing,
+  whiteQueen,
+  whiteBishop,
+  whiteKnight,
+  whiteRook,
+  whitePawn,
+  blackKing,
+  blackQueen,
+  blackBishop,
+  blackKnight,
+  blackRook,
+  blackPawn,
+  step,
+}
