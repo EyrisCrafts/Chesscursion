@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 
 
 //TODO
-// If you land on top after gravity, kill auto
 // Fix Step usage
 // Add key and lock
 // Add doors
