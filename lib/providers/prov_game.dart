@@ -58,13 +58,13 @@ class ProvGame extends ChangeNotifier {
             for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
               if (!board[my][mx][0].isEmpty() && !board[my][mx][0].isBlock() && !board[my][mx][0].isStep()) {
                 final ModelPosition newPosition = await gravitycheck(context, ModelPosition(mx, my));
-                  if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
-                    selectedPiece.isSelected = true;
-                    selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
-                    selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
+                if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
+                  selectedPiece.isSelected = true;
+                  selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
+                  selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
 
-                    updateSuggestions();
-                  }
+                  updateSuggestions();
+                }
               }
             }
           }
@@ -124,8 +124,8 @@ class ProvGame extends ChangeNotifier {
     BuildContext context,
     ModelPosition endPos,
   ) async {
-    //If piece has empty below
-    if (!(endPos.y + 1 != 10 && board[endPos.y + 1][endPos.x][0].isEmpty())) {
+    //If piece below is not black or block or out of bounds return
+    if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack()))) {
       return endPos;
     }
     //Get old piece
@@ -134,7 +134,7 @@ class ProvGame extends ChangeNotifier {
     notifyListeners();
     //Calculat the last position
     int newY = endPos.y + 1;
-    while (newY + 1 != 10 && board[newY + 1][endPos.x][0].isEmpty()) {
+    while (newY + 1 != 10 && (board[newY + 1][endPos.x][0].isEmpty() || board[newY + 1][endPos.x][0].isPieceBlack())) {
       newY++;
     }
     if (newY == 10) newY--;
@@ -149,6 +149,9 @@ class ProvGame extends ChangeNotifier {
     isMoveAnimationInProgress = true;
     await Future.delayed(const Duration(milliseconds: 599), () {
       isMoveAnimationInProgress = false;
+      if (board[newY][endPos.x][0].isPieceBlack()) {
+        audioPlayMove(isKill: true);
+      }
       board[newY][endPos.x][0] = piece;
       notifyListeners();
       entry.remove();
@@ -162,9 +165,6 @@ class ProvGame extends ChangeNotifier {
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
         board[i][j].removeWhere((element) => element == EnumBoardPiece.suggested);
-        // if (board[i][j][0].isSuggested()) {
-        //   board[i][j][0] = EnumBoardPiece.blank;
-        // }
       }
     }
     notifyListeners();
@@ -173,7 +173,6 @@ class ProvGame extends ChangeNotifier {
   void updateSuggestions() {
     List<ModelPosition> possibles = Utils.getPossibleMove(board, selectedPiece.position!);
     for (ModelPosition pos in possibles) {
-      // if (board[pos.y][pos.x][0].isEmpty()) board[pos.y][pos.x][0] = EnumBoardPiece.suggested;
       board[pos.y][pos.x].add(EnumBoardPiece.suggested);
     }
     notifyListeners();
