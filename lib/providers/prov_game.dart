@@ -25,7 +25,11 @@ class ProvGame extends ChangeNotifier {
 
   void onCellTapped(int x, int y, BuildContext context) {
     if (GetIt.I<ProvCreator>().isCreatorMode) {
-      board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
+      if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
+        board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
+      } else {
+        board[y][x].add(GetIt.I<ProvCreator>().selectedPiece!);
+      }
       notifyListeners();
       return;
     }
@@ -54,19 +58,14 @@ class ProvGame extends ChangeNotifier {
 
         //Gravity Check !
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-          for (int my = 0; my < 10; my++) {
-            for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
-              if (!board[my][mx][0].isEmpty() && !board[my][mx][0].isBlock() && !board[my][mx][0].isStep()) {
-                final ModelPosition newPosition = await gravitycheck(context, ModelPosition(mx, my));
-                if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
-                  selectedPiece.isSelected = true;
-                  selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
-                  selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
+          // New Gravity check
+          final ModelPosition newPosition = await gravitycheck(context, ModelPosition(finalDestination.x, finalDestination.y));
+          if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
+            selectedPiece.isSelected = true;
+            selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
+            selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
 
-                  updateSuggestions();
-                }
-              }
-            }
+            updateSuggestions();
           }
         });
       }
@@ -128,6 +127,9 @@ class ProvGame extends ChangeNotifier {
     if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack()))) {
       return endPos;
     }
+    if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step)) {
+      return endPos;
+    }
     //Get old piece
     EnumBoardPiece piece = board[endPos.y][endPos.x][0];
     board[endPos.y][endPos.x][0] = EnumBoardPiece.blank;
@@ -135,6 +137,9 @@ class ProvGame extends ChangeNotifier {
     //Calculat the last position
     int newY = endPos.y + 1;
     while (newY + 1 != 10 && (board[newY + 1][endPos.x][0].isEmpty() || board[newY + 1][endPos.x][0].isPieceBlack())) {
+      if (board[newY + 1][endPos.x].cellContains(EnumBoardPiece.step)) {
+        break;
+      }
       newY++;
     }
     if (newY == 10) newY--;

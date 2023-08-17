@@ -35,3 +35,12 @@ extension ChessBoardUtils on EnumBoardPiece {
     return this == EnumBoardPiece.suggested;
   }
 }
+
+extension ChessBoardUtilsList on List<EnumBoardPiece> {
+  bool cellContains(EnumBoardPiece piece) {
+    if (contains(piece)) {
+      return true;
+    }
+    return false;
+  }
+}

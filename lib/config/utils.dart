@@ -54,7 +54,8 @@ class Utils {
   // Is the position where piece will be moved TO valid?
   static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
     // Within bounds and empty or black piece or Step
-    return endPosition.isWithinBounds() && (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep());
+    return endPosition.isWithinBounds() &&
+        (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep());
   }
 
   //All possible moves of a piece
@@ -73,6 +74,15 @@ class Utils {
       case EnumBoardPiece.blackRook:
       case EnumBoardPiece.blackPawn:
       case EnumBoardPiece.whitePawn:
+        // Only top if top is empty or step
+        if (!board[position.y-1][position.x].cellContains(EnumBoardPiece.step)) {
+          return [ModelPosition(position.x, position.y-1)];
+        }
+        
+        if (board[position.y-1][position.x].cellContains(EnumBoardPiece.step)) {
+          return [ModelPosition(position.x, position.y-1), ModelPosition(position.x, position.y-2)];
+        }
+        
         return [];
       case EnumBoardPiece.whiteKing:
         for (int i = -1; i < 2; i++) {
@@ -151,7 +161,7 @@ class Utils {
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
         for (int k = 0; k < board[i][j].length; k++) {
-          translatedBoard[i][j].add(EnumBoardPiece.values.indexOf(board[i][j][k])) ;
+          translatedBoard[i][j].add(EnumBoardPiece.values.indexOf(board[i][j][k]));
         }
       }
     }

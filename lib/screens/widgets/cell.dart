@@ -14,6 +14,12 @@ class Cell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double cellSize = context.read<ProvPrefs>().cellSize;
+    final stackContent = cellContent.toList();
+    // swap position of step to 0
+    final stepPosition = stackContent.indexOf(EnumBoardPiece.step);
+    if (stepPosition != -1) {
+      stackContent.insert(0, stackContent.removeAt(stepPosition));
+    }
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -22,7 +28,7 @@ class Cell extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(color: ((index + (index ~/ Constants.numHorizontalBoxes)) % 2) == 0 ? Constants.cellColorLight : Constants.cellColorDark),
         child: Stack(
-          children: List.generate(cellContent.length, (index) => Utils.getIcon(cellContent[index], cellSize)),
+          children: List.generate(stackContent.length, (index) => Utils.getIcon(stackContent[index], cellSize)),
         ),
       ),
     );

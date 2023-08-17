@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 
 
 //TODO
-// Fix Step usage
 // Add key and lock
 // Add doors
 
