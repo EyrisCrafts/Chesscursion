@@ -15,6 +15,8 @@ enum EnumBoardPiece {
   blackRook,
   blackPawn,
   step,
+  key,
+  lock
 }
 
 // Step Rules

@@ -73,6 +73,8 @@ flutter:
     - assets/music.mp3
     - assets/move.mp3
     - assets/square-xmark-solid.svg
+    - assets/icon_key.svg
+    - assets/icon_lock.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

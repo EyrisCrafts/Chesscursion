@@ -1,9 +1,12 @@
 import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/models/model_position.dart';
+import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/screens/widgets/cell.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
 
 import 'constants.dart';
 
@@ -14,10 +17,27 @@ class Utils {
     return Icon(iconData, color: color, size: size == -1 ? cellSize - 5 : size);
   }
 
+  static Widget iconSvg(
+    String path,
+  ) {
+    double cellSize = GetIt.I<ProvPrefs>().cellSize;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 1000),
+      height: cellSize - 10,
+      alignment: Alignment.center,
+      width: cellSize - 10,
+      child: SvgPicture.asset(path, width: cellSize - 10, height: cellSize - 10, ),
+    );
+  }
+
   static Widget getIcon(EnumBoardPiece piece, double cellSize) {
     switch (piece) {
       case EnumBoardPiece.blank:
         return const SizedBox();
+      case EnumBoardPiece.lock:
+        return iconSvg("assets/icon_lock.svg");
+      case EnumBoardPiece.key:
+        return iconSvg("assets/icon_key.svg");
       case EnumBoardPiece.step:
         return iconWidget(FontAwesomeIcons.upLong, cellSize, color: Colors.black, size: cellSize - 2);
       case EnumBoardPiece.block:
@@ -55,7 +75,7 @@ class Utils {
   static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
     // Within bounds and empty or black piece or Step
     return endPosition.isWithinBounds() &&
-        (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep());
+        (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep() || board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
   }
 
   //All possible moves of a piece
@@ -64,6 +84,8 @@ class Utils {
     List<ModelPosition> toReturn = [];
     switch (piece) {
       case EnumBoardPiece.blank:
+      case EnumBoardPiece.lock:
+      case EnumBoardPiece.key:
       case EnumBoardPiece.block:
       case EnumBoardPiece.step:
       case EnumBoardPiece.suggested:
@@ -75,14 +97,14 @@ class Utils {
       case EnumBoardPiece.blackPawn:
       case EnumBoardPiece.whitePawn:
         // Only top if top is empty or step
-        if (!board[position.y-1][position.x].cellContains(EnumBoardPiece.step)) {
-          return [ModelPosition(position.x, position.y-1)];
+        if (!board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
+          return [ModelPosition(position.x, position.y - 1)];
         }
-        
-        if (board[position.y-1][position.x].cellContains(EnumBoardPiece.step)) {
-          return [ModelPosition(position.x, position.y-1), ModelPosition(position.x, position.y-2)];
+
+        if (board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
+          return [ModelPosition(position.x, position.y - 1), ModelPosition(position.x, position.y - 2)];
         }
-        
+
         return [];
       case EnumBoardPiece.whiteKing:
         for (int i = -1; i < 2; i++) {

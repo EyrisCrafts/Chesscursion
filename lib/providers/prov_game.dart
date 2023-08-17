@@ -47,6 +47,11 @@ class ProvGame extends ChangeNotifier {
         } else {
           audioPlayMove(isKill: true);
         }
+
+        if (board[finalDestination.y][finalDestination.x].cellContains(EnumBoardPiece.key)) {
+          removeAllLocks();
+        }
+
         // If new place has a step, move on top of it
         board[selectedPiece.position!.y][selectedPiece.position!.x][0] = EnumBoardPiece.blank;
         board[finalDestination.y][finalDestination.x][0] = selectedPiece.selectedPiece!;
@@ -124,7 +129,7 @@ class ProvGame extends ChangeNotifier {
     ModelPosition endPos,
   ) async {
     //If piece below is not black or block or out of bounds return
-    if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack()))) {
+    if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack() || board[endPos.y + 1][endPos.x].cellContains(EnumBoardPiece.key)))) {
       return endPos;
     }
     if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step)) {
@@ -157,11 +162,29 @@ class ProvGame extends ChangeNotifier {
       if (board[newY][endPos.x][0].isPieceBlack()) {
         audioPlayMove(isKill: true);
       }
+      if (board[newY][endPos.x].cellContains(EnumBoardPiece.key)) {
+        // TODO Key sound
+        audioPlayMove(isKill: true);
+        // remove all locks
+        removeAllLocks();
+      }
       board[newY][endPos.x][0] = piece;
       notifyListeners();
       entry.remove();
     });
     return ModelPosition(endPos.x, newY);
+  }
+
+  void removeAllLocks() {
+    for (int my = 0; my < 10; my++) {
+      for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
+        if (board[my][mx].cellContains(EnumBoardPiece.lock)) {
+          board[my][mx].removeAt(0);
+          board[my][mx].insert(0, EnumBoardPiece.blank);
+        }
+      }
+    }
+    notifyListeners();
   }
 
   bool isMoveAnimationInProgress = false;
