@@ -34,6 +34,14 @@ class ProvGame extends ChangeNotifier {
       return;
     }
     if (isMoveAnimationInProgress) return;
+    if (board[y][x][0].isPieceWhite()) {
+      selectedPiece.isSelected = true;
+      selectedPiece.selectedPiece = board[y][x][0];
+      selectedPiece.position = ModelPosition(x, y);
+
+      updateSuggestions();
+      return;
+    }
     if (selectedPiece.isSelected) {
       if (Utils.getPossibleMove(board, selectedPiece.position!).contains(ModelPosition(x, y))) {
         ModelPosition finalDestination = ModelPosition(x, y);

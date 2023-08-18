@@ -10,9 +10,11 @@ import 'package:provider/provider.dart';
 
 
 //TODO
-// Add key and lock
 // Add doors
-
+// GUI Get better board
+// GUI Get a menu
+// GUI Get a better looking list of levels
+// Change structure of levels to include metadata of each level
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
