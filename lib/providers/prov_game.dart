@@ -8,6 +8,7 @@ import 'package:chesscursion_creator/config/local_data.dart';
 import 'package:chesscursion_creator/config/utils.dart';
 import 'package:chesscursion_creator/models/model_position.dart';
 import 'package:chesscursion_creator/models/selected_piece.dart';
+import 'package:chesscursion_creator/overlays/overlay_pawn_promotion.dart';
 import 'package:chesscursion_creator/overlays/overlay_piece.dart';
 import 'package:chesscursion_creator/overlays/overlay_won.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
@@ -71,6 +72,7 @@ class ProvGame extends ChangeNotifier {
         buttonCheckForDestination();
 
         notifyListeners();
+        checkPromotion(finalDestination, context);
 
         //Win check
         winCheckCondition(context);
@@ -90,14 +92,21 @@ class ProvGame extends ChangeNotifier {
       }
       selectedPiece.isSelected = false;
       removeSuggestions();
-    } else {
-      if (board[y][x][0].isPieceWhite()) {
-        selectedPiece.isSelected = true;
-        selectedPiece.selectedPiece = board[y][x][0];
-        selectedPiece.position = ModelPosition(x, y);
+    }
+  }
 
-        updateSuggestions();
-      }
+  void checkPromotion(ModelPosition endPosition, BuildContext context) {
+    if (board[endPosition.y][endPosition.x][0] == EnumBoardPiece.whitePawn && endPosition.y == 0) {
+      OverlayEntry? entry;
+      entry = OverlayEntry(
+          builder: (context) => OverlayPawnPromotion(
+                chosenPiece: (EnumBoardPiece chosenPiece) {
+                  board[endPosition.y][endPosition.x][0] = chosenPiece;
+                  notifyListeners();
+                  entry?.remove();
+                },
+              ));
+      Overlay.of(context).insert(entry);
     }
   }
 
@@ -122,8 +131,6 @@ class ProvGame extends ChangeNotifier {
   }
 
   void updateDoorActivation(bool activate) {
-    log("Updating all doors to be $activate");
-
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
         // If there is a door, activate it
