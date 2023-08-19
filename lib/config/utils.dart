@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/models/model_position.dart';
@@ -26,12 +28,24 @@ class Utils {
       height: cellSize - 10,
       alignment: Alignment.center,
       width: cellSize - 10,
-      child: SvgPicture.asset(path, width: cellSize - 10, height: cellSize - 10, ),
+      child: SvgPicture.asset(
+        path,
+        width: cellSize - 10,
+        height: cellSize - 10,
+      ),
     );
   }
 
   static Widget getIcon(EnumBoardPiece piece, double cellSize) {
     switch (piece) {
+      case EnumBoardPiece.buttonPressed:
+        return iconSvg("assets/button_pressed.svg");
+      case EnumBoardPiece.buttonUnpressed:
+        return iconSvg("assets/button_unpressed.svg");
+      case EnumBoardPiece.doorActivated:
+        return iconSvg("assets/door_activated.svg");
+      case EnumBoardPiece.doorDeactivated:
+        return iconSvg("assets/door_deactivated.svg");
       case EnumBoardPiece.blank:
         return const SizedBox();
       case EnumBoardPiece.lock:
@@ -73,9 +87,19 @@ class Utils {
 
   // Is the position where piece will be moved TO valid?
   static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
+    // If there is a activated door, return false
+    // if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) return false;
+    if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)){
+      log("Activated door is in the way");
+      return false;
+    }
+    
     // Within bounds and empty or black piece or Step
     return endPosition.isWithinBounds() &&
-        (board[endPosition.y][endPosition.x][0].isEmpty() || board[endPosition.y][endPosition.x][0].isPieceBlack() || board[endPosition.y][endPosition.x][0].isStep() || board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
+        (board[endPosition.y][endPosition.x][0].isEmpty() ||
+            board[endPosition.y][endPosition.x][0].isPieceBlack() ||
+            board[endPosition.y][endPosition.x][0].isStep() ||
+            board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
   }
 
   //All possible moves of a piece
@@ -83,6 +107,10 @@ class Utils {
     EnumBoardPiece piece = board[position.y][position.x][0];
     List<ModelPosition> toReturn = [];
     switch (piece) {
+      case EnumBoardPiece.buttonPressed:
+      case EnumBoardPiece.buttonUnpressed:
+      case EnumBoardPiece.doorActivated:
+      case EnumBoardPiece.doorDeactivated:
       case EnumBoardPiece.blank:
       case EnumBoardPiece.lock:
       case EnumBoardPiece.key:
@@ -95,6 +123,7 @@ class Utils {
       case EnumBoardPiece.blackKnight:
       case EnumBoardPiece.blackRook:
       case EnumBoardPiece.blackPawn:
+        return [];
       case EnumBoardPiece.whitePawn:
         // Only top if top is empty or step
         if (!board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {

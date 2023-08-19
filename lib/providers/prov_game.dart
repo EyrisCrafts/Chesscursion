@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chesscursion_creator/config/constants.dart';
 import 'package:chesscursion_creator/config/enums.dart';
@@ -35,6 +37,7 @@ class ProvGame extends ChangeNotifier {
     }
     if (isMoveAnimationInProgress) return;
     if (board[y][x][0].isPieceWhite()) {
+      removeSuggestions();
       selectedPiece.isSelected = true;
       selectedPiece.selectedPiece = board[y][x][0];
       selectedPiece.position = ModelPosition(x, y);
@@ -64,6 +67,9 @@ class ProvGame extends ChangeNotifier {
         board[selectedPiece.position!.y][selectedPiece.position!.x][0] = EnumBoardPiece.blank;
         board[finalDestination.y][finalDestination.x][0] = selectedPiece.selectedPiece!;
 
+        // If cell contains a button, activate it
+        buttonCheckForDestination();
+
         notifyListeners();
 
         //Win check
@@ -91,6 +97,47 @@ class ProvGame extends ChangeNotifier {
         selectedPiece.position = ModelPosition(x, y);
 
         updateSuggestions();
+      }
+    }
+  }
+
+  // When a piece is moved.
+  void buttonCheckForDestination() {
+    for (int i = 0; i < Constants.numVerticalBoxes; i++) {
+      for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
+        // If button pressed but not piece on it
+        if (board[i][j].cellContains(EnumBoardPiece.buttonPressed) && !board[i][j][0].isPieceWhite()) {
+          board[i][j].remove(EnumBoardPiece.buttonPressed);
+          board[i][j].add(EnumBoardPiece.buttonUnpressed);
+          updateDoorActivation(false);
+        }
+        // If button unpressed but piece on it
+        if (board[i][j].cellContains(EnumBoardPiece.buttonUnpressed) && board[i][j][0].isPieceWhite()) {
+          board[i][j].remove(EnumBoardPiece.buttonUnpressed);
+          board[i][j].add(EnumBoardPiece.buttonPressed);
+          updateDoorActivation(true);
+        }
+      }
+    }
+  }
+
+  void updateDoorActivation(bool activate) {
+    log("Updating all doors to be $activate");
+
+    for (int i = 0; i < Constants.numVerticalBoxes; i++) {
+      for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
+        // If there is a door, activate it
+        if (!activate) {
+          if (board[i][j].cellContains(EnumBoardPiece.doorDeactivated)) {
+            board[i][j].remove(EnumBoardPiece.doorDeactivated);
+            board[i][j].add(EnumBoardPiece.doorActivated);
+          }
+        } else {
+          if (board[i][j].cellContains(EnumBoardPiece.doorActivated)) {
+            board[i][j].remove(EnumBoardPiece.doorActivated);
+            board[i][j].add(EnumBoardPiece.doorDeactivated);
+          }
+        }
       }
     }
   }
@@ -198,6 +245,7 @@ class ProvGame extends ChangeNotifier {
   bool isMoveAnimationInProgress = false;
 
   void removeSuggestions() {
+    log("Removing suggestions");
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
         board[i][j].removeWhere((element) => element == EnumBoardPiece.suggested);

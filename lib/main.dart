@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 
 //TODO
-// Add doors
+// Add all the levels
 // GUI Get better board
 // GUI Get a menu
 // GUI Get a better looking list of levels

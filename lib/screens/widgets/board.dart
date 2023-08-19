@@ -36,7 +36,8 @@ class Board extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text("Menu", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
+                    Text("Menu", ),
+                    // Text("Menu", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
                     const SizedBox(
                       height: 20,
                     ),
@@ -75,7 +76,8 @@ class Board extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
-                    Text("Levels !", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
+                    Text("Levels !", ),
+                    // Text("Levels !", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
                     const SizedBox(
                       height: 10,
                     ),
@@ -92,7 +94,8 @@ class Board extends StatelessWidget {
                                     width: 30,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(shape: BoxShape.circle, color: currentLevel == i ? Colors.blue : Colors.white),
-                                    child: Text("${i + 1}", style: GoogleFonts.permanentMarker(fontSize: 20, color: currentLevel == i ? Colors.white : Colors.black)));
+                                    child: Text("${i + 1}", style: TextStyle(fontSize: 20, color: currentLevel == i ? Colors.white : Colors.black)));
+                                    // child: Text("${i + 1}", style: GoogleFonts.permanentMarker(fontSize: 20, color: currentLevel == i ? Colors.white : Colors.black)));
                               }))
                   ],
                 ),

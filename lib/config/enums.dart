@@ -16,7 +16,11 @@ enum EnumBoardPiece {
   blackPawn,
   step,
   key,
-  lock
+  lock,
+  buttonPressed,
+  buttonUnpressed,
+  doorActivated,
+  doorDeactivated
 }
 
 // Step Rules

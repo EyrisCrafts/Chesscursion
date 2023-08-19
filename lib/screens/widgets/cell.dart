@@ -20,6 +20,11 @@ class Cell extends StatelessWidget {
     if (stepPosition != -1) {
       stackContent.insert(0, stackContent.removeAt(stepPosition));
     }
+    
+    final buttonPosition = stackContent.indexOf(EnumBoardPiece.buttonPressed);
+    if (buttonPosition != -1) {
+      stackContent.insert(0, stackContent.removeAt(buttonPosition));
+    }
     return GestureDetector(
       onTap: onTap,
       child: Container(

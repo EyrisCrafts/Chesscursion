@@ -75,6 +75,10 @@ flutter:
     - assets/square-xmark-solid.svg
     - assets/icon_key.svg
     - assets/icon_lock.svg
+    - assets/button_pressed.svg
+    - assets/button_unpressed.svg
+    - assets/door_activated.svg
+    - assets/door_deactivated.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
