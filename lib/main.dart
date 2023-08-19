@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 
 //TODO
-// Add all the levels
+// Add pawn promotion feature
 // GUI Get better board
 // GUI Get a menu
 // GUI Get a better looking list of levels

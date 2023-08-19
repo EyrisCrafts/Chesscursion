@@ -11,7 +11,7 @@ class ProvCreator extends ChangeNotifier {
     translatedMainBoard = Utils.convertBoard(mainBoard);
   }
 
-  bool isCreatorMode = false;
+  bool isCreatorMode = true;
   EnumBoardPiece? selectedPiece;
   int creatorBoardSize = 100;
   List<List<List<EnumBoardPiece>>> translatedMainBoard = [];
