@@ -53,7 +53,7 @@ class _CellSuggestedState extends State<CellSuggested> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       toggleVisibilty();
     });
   }

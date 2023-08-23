@@ -1,13 +1,13 @@
 import 'package:chesscursion_creator/config/constants.dart';
-import 'package:chesscursion_creator/config/local_data.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
+import 'package:chesscursion_creator/screens/widgets/Custom_icon_button.dart';
 import 'package:chesscursion_creator/screens/widgets/cell.dart';
+import 'package:chesscursion_creator/screens/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Board extends StatelessWidget {
@@ -21,112 +21,115 @@ class Board extends StatelessWidget {
     }
     return Container(
       alignment: Alignment.center,
-      color: const Color.fromARGB(255, 105, 75, 31),
+      color: Constants.colorSecondary,
       child: Stack(
         children: [
           //Settings
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 height: screenSize.height,
-                width: (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) / 2,
-                color: const Color.fromARGB(255, 141, 102, 42),
+                width: (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) - 10,
+                color: Constants.colorSecondary,
                 child: Column(
                   children: [
                     const SizedBox(
                       height: 20,
                     ),
-                    Text("Menu", ),
-                    // Text("Menu", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
+                    // const Text("Menu", style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: "Marko One")),
+                    CustomButton(
+                        inverseColors: true,
+                        text: "Menu",
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        width: 200,
+                        fontSize: 15),
                     const SizedBox(
                       height: 20,
                     ),
-                    IconButton(
+                    CustomButton(
+                        inverseColors: true,
+                        text: "Levels",
                         onPressed: () {
-                          ProvGame prov = context.read<ProvGame>();
-                          prov.setLevel(prov.currentLevel);
+                          Navigator.pop(context);
                         },
-                        icon: const Icon(FontAwesomeIcons.rotate, color: Colors.white, size: 30)),
+                        width: 200,
+                        fontSize: 15),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     const Spacer(),
-                    IconButton(
-                        onPressed: () {
-                          ProvGame prov = context.read<ProvGame>();
-                          prov.switchMusic();
-                        },
-                        icon: Selector<ProvGame, bool>(
-                            selector: (p0, p1) => p1.isMusicAllowed,
-                            builder: (context, isMusicAllowed, _) {
-                              return Icon(isMusicAllowed ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark, color: Colors.white, size: 30);
-                            })),
+                    Consumer<ProvGame>(
+                      builder: (context, value, child) {
+                        return Text("Level\n${value.currentLevel + 1}", textAlign: TextAlign.center, style: const TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'Marko One'));
+                      },
+                    ),
+
+                    const Spacer(),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Selector<ProvGame, bool>(
+                              selector: (p0, p1) => p1.isMusicAllowed,
+                              builder: (context, isMusicAllowed, _) {
+                                return CustomIconButton(
+                                  onPressed: () {
+                                    ProvGame prov = context.read<ProvGame>();
+                                    // prov.switchMusic();
+                                  },
+                                  icon: isMusicAllowed ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark,
+                                );
+                              }),
+                        ),
+                        Expanded(
+                          child: CustomIconButton(
+                            onPressed: () {
+                              ProvGame prov = context.read<ProvGame>();
+                              prov.setLevel(prov.currentLevel);
+                            },
+                            icon: FontAwesomeIcons.rotate,
+                          ),
+                        ),
+                      ],
+                    ),
+
                     const SizedBox(
                       height: 20,
                     ),
                   ],
                 )),
           ),
-          //Levels
+
           Align(
-            child: Container(
-              height: screenSize.height,
-              width: (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) / 2,
-              color: const Color.fromARGB(255, 141, 102, 42),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text("Levels !", ),
-                    // Text("Levels !", style: GoogleFonts.permanentMarker(fontSize: 20, color: Colors.white)),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    for (int i = 0; i < LocalData.levels.length; i++)
-                      IconButton(
-                          onPressed: () {
-                            context.read<ProvGame>().setLevel(i);
-                          },
-                          icon: Selector<ProvGame, int>(
-                              selector: (p0, p1) => p1.currentLevel,
-                              builder: (context, currentLevel, _) {
-                                return Container(
-                                    height: 30,
-                                    width: 30,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(shape: BoxShape.circle, color: currentLevel == i ? Colors.blue : Colors.white),
-                                    child: Text("${i + 1}", style: TextStyle(fontSize: 20, color: currentLevel == i ? Colors.white : Colors.black)));
-                                    // child: Text("${i + 1}", style: GoogleFonts.permanentMarker(fontSize: 20, color: currentLevel == i ? Colors.white : Colors.black)));
-                              }))
-                  ],
-                ),
-              ),
-            ),
             alignment: Alignment.centerRight,
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                for (int ind = 0; ind < Constants.numVerticalBoxes; ind++)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      for (int index = 0; index < Constants.numHorizontalBoxes; index++)
-                        Consumer<ProvGame>(builder: (context, game, _) {
-                          return Cell(
-                            key: context.read<ProvGame>().boardKeys[ind][index],
-                            index: index + (ind * Constants.numHorizontalBoxes),
-                            cellContent: game.board[ind][index],
-                            onTap: () {
-                              context.read<ProvGame>().onCellTapped(index, ind, context);
-                            },
-                          );
-                        })
-                    ],
-                  ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  for (int ind = 0; ind < Constants.numVerticalBoxes; ind++)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        for (int index = 0; index < Constants.numHorizontalBoxes; index++)
+                          Consumer<ProvGame>(builder: (context, game, _) {
+                            return Cell(
+                              key: context.read<ProvGame>().boardKeys[ind][index],
+                              index: index + (ind * Constants.numHorizontalBoxes),
+                              cellContent: game.board[ind][index],
+                              onTap: () {
+                                context.read<ProvGame>().onCellTapped(index, ind, context);
+                              },
+                            );
+                          })
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
         ],

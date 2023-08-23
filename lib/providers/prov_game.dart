@@ -269,6 +269,10 @@ class ProvGame extends ChangeNotifier {
     notifyListeners();
   }
 
+  stopMusic() {
+    audioBackground.stop();
+  }
+
   switchMusic() async {
     isMusicAllowed = !isMusicAllowed;
     if (isMusicAllowed) {

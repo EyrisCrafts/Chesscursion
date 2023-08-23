@@ -24,7 +24,7 @@ class _ScreenGameState extends State<ScreenGame> {
       GetIt.I<ProvGame>().audioPlayMusic();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      GetIt.I<ProvGame>().setLevel(0);
+      // GetIt.I<ProvGame>().setLevel(0);
       if (GetIt.I<ProvCreator>().isCreatorMode) {
         GetIt.I<ProvCreator>().restartBoard();
       }
@@ -38,6 +38,7 @@ class _ScreenGameState extends State<ScreenGame> {
         body: Column(
           children: [
             const Expanded(child: Board()),
+            if (GetIt.I<ProvCreator>().isCreatorMode)
             Container(
                 height: 100,
                 color: Colors.pink.withOpacity(0.2),
@@ -60,13 +61,13 @@ class _ScreenGameState extends State<ScreenGame> {
                         // Save board to disk? to clipboard?
                         GetIt.I<ProvCreator>().saveBoard();
                       },
-                      icon: Icon(Icons.save_alt)),
+                      icon: const Icon(Icons.save_alt)),
                   IconButton.outlined(
                       onPressed: () {
                         // Save board to disk? to clipboard?
                         GetIt.I<ProvCreator>().restartBoard();
                       },
-                      icon: Icon(Icons.restart_alt_rounded)),
+                      icon: const Icon(Icons.restart_alt_rounded)),
                 ]))
           ],
         ));

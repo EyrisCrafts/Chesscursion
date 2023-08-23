@@ -3,6 +3,7 @@ import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
+import 'package:chesscursion_creator/screens/screen_main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 // GUI Get better board
 // GUI Get a menu
 // GUI Get a better looking list of levels
-// Change structure of levels to include metadata of each level
+// Change structure of levels to include metadata of each level 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const ScreenGame(),
+          home: const ScreenMain(),
+          // home: const ScreenGame(),
         ));
   }
 }

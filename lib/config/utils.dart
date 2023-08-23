@@ -23,15 +23,26 @@ class Utils {
     String path,
   ) {
     double cellSize = GetIt.I<ProvPrefs>().cellSize;
+
+    var alignment = Alignment.center;
+    double? height = cellSize - 10;
+    if (path.contains("step")) {
+      alignment = Alignment.topCenter;
+      height = null;
+    } else if (path.contains("button")) {
+      alignment = Alignment.bottomCenter;
+      height = null;
+    }
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 1000),
       height: cellSize - 10,
-      alignment: Alignment.center,
+      alignment: alignment,
       width: cellSize - 10,
       child: SvgPicture.asset(
         path,
         width: cellSize - 10,
-        height: cellSize - 10,
+        height: height,
       ),
     );
   }
@@ -39,9 +50,9 @@ class Utils {
   static Widget getIcon(EnumBoardPiece piece, double cellSize) {
     switch (piece) {
       case EnumBoardPiece.buttonPressed:
-        return iconSvg("assets/button_pressed.svg");
+        return iconSvg("assets/svgs/button_pressed.svg");
       case EnumBoardPiece.buttonUnpressed:
-        return iconSvg("assets/button_unpressed.svg");
+        return iconSvg("assets/svgs/button_unpressed.svg");
       case EnumBoardPiece.doorActivated:
         return iconSvg("assets/door_activated.svg");
       case EnumBoardPiece.doorDeactivated:
@@ -53,23 +64,25 @@ class Utils {
       case EnumBoardPiece.key:
         return iconSvg("assets/icon_key.svg");
       case EnumBoardPiece.step:
-        return iconWidget(FontAwesomeIcons.upLong, cellSize, color: Colors.black, size: cellSize - 2);
+        return iconSvg("assets/svgs/step.svg");
+      // return iconWidget(FontAwesomeIcons.upLong, cellSize, color: Colors.black, size: cellSize - 2);
       case EnumBoardPiece.block:
-        return iconWidget(FontAwesomeIcons.squareXmark, cellSize, color: Colors.black, size: cellSize - 2);
+        return iconSvg("assets/svgs/block.svg");
+      // return iconWidget(FontAwesomeIcons.squareXmark, cellSize, color: Colors.black, size: cellSize - 2);
       case EnumBoardPiece.suggested:
         return const CellSuggested();
       case EnumBoardPiece.whiteKing:
-        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.whiteQueen:
-        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.whiteBishop:
-        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.whiteKnight:
-        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.whiteRook:
-        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.whitePawn:
-        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Colors.white);
+        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Constants.colorSecondary);
       case EnumBoardPiece.blackKing:
         return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Colors.black);
       case EnumBoardPiece.blackQueen:
@@ -89,17 +102,18 @@ class Utils {
   static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
     // If there is a activated door, return false
     // if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) return false;
-    if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)){
+
+    if (!endPosition.isWithinBounds()) return false;
+    if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) {
       log("Activated door is in the way");
       return false;
     }
-    
+
     // Within bounds and empty or black piece or Step
-    return endPosition.isWithinBounds() &&
-        (board[endPosition.y][endPosition.x][0].isEmpty() ||
-            board[endPosition.y][endPosition.x][0].isPieceBlack() ||
-            board[endPosition.y][endPosition.x][0].isStep() ||
-            board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
+    return (board[endPosition.y][endPosition.x][0].isEmpty() ||
+        board[endPosition.y][endPosition.x][0].isPieceBlack() ||
+        board[endPosition.y][endPosition.x][0].isStep() ||
+        board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
   }
 
   //All possible moves of a piece
