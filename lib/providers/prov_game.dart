@@ -12,6 +12,7 @@ import 'package:chesscursion_creator/overlays/overlay_pawn_promotion.dart';
 import 'package:chesscursion_creator/overlays/overlay_piece.dart';
 import 'package:chesscursion_creator/overlays/overlay_won.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
+import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -174,16 +175,23 @@ class ProvGame extends ChangeNotifier {
     return false;
   }
 
+  bool checkingWinCondition = false;
+
   void winCheckCondition(BuildContext context) async {
+    if (checkingWinCondition) return; // To make sure this function is only called once
+    checkingWinCondition = true;
     await Future.delayed(const Duration(milliseconds: 700));
     if (!blackExists()) {
       OverlayEntry entry = OverlayEntry(builder: (context) => const OverlayWon());
       Overlay.of(context).insert(entry);
-      Future.delayed(const Duration(milliseconds: 3000), () {
+      await Future.delayed(const Duration(milliseconds: 3000), () {
         entry.remove();
         setLevel(++currentLevel);
+        log("Level completed $currentLevel");
+        GetIt.I<ProvUser>().setLevelsCompleted(currentLevel);
       });
     }
+    checkingWinCondition = false;
   }
 
   Future<ModelPosition> gravitycheck(

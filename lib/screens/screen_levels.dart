@@ -3,12 +3,14 @@ import 'dart:developer';
 import 'package:chesscursion_creator/config/constants.dart';
 import 'package:chesscursion_creator/config/local_data.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_back.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class ScreenLevels extends StatefulWidget {
   const ScreenLevels({super.key});
@@ -21,6 +23,7 @@ class _ScreenLevelsState extends State<ScreenLevels> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
         backgroundColor: const Color(0xffE3F6E3),
         body: Stack(
@@ -38,7 +41,7 @@ class _ScreenLevelsState extends State<ScreenLevels> {
             ),
             Positioned.fill(
                 child: CustomScrollView(
-                            slivers: [
+              slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -62,7 +65,6 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                             text: "Create your own",
                             onPressed: () {
                               // TODO Send to creator
-                              
                             })
                       ],
                     ),
@@ -70,7 +72,6 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.all(20.0),
-                  
                   sliver: SliverGrid.builder(
                       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                         mainAxisExtent: 80,
@@ -80,99 +81,57 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                       ),
                       itemCount: LocalData.levels.length,
                       itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            GetIt.I<ProvGame>().setLevel(index);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Constants.colorSecondary, boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3), // changes position of shadow
-                              )
-                            ]),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "${index + 1}",
-                              style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: "Marko One"),
-                            ),
-                          ),
+                        return Consumer<ProvUser>(
+                          builder: (context,provUser,_) {
+                            final isLocked = provUser.levelsCompleted < index;
+                            return ItemLevel(
+                                onTap: () {
+                                  if (isLocked) return;
+                                  GetIt.I<ProvGame>().setLevel(index);
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
+                                },
+                                level: index + 1,
+                                isLocked: isLocked);
+                          }
                         );
+                       
                       }),
                 )
-                            ],
-                          )),
-            // Positioned.fill(
-            //     child: Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Padding(
-            //       padding: const EdgeInsets.all(20.0),
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: [
-            //           const Row(
-            //             mainAxisSize: MainAxisSize.min,
-            //             crossAxisAlignment: CrossAxisAlignment.center,
-            //             children: [
-            //               CustomBack(),
-            //               SizedBox(
-            //                 width: 10,
-            //               ),
-            //               Text("Levels", style: TextStyle(fontSize: 18, color: Constants.colorSecondary, fontFamily: "Marko One")),
-            //             ],
-            //           ),
-            //           CustomButton(
-            //               fontSize: 15,
-            //               width: 200,
-            //               text: "Create your own",
-            //               onPressed: () {
-            //                 // TODO Send to creator
-            //               })
-            //         ],
-            //       ),
-            //     ),
-            //     GridView.builder(
-            //       shrinkWrap: true,
-            //       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            //         mainAxisExtent: 100,
-            //         maxCrossAxisExtent: 100,
-            //         crossAxisSpacing: 10,
-            //         mainAxisSpacing: 10,
-            //       ),
-            //       padding: const EdgeInsets.all(20),
-            //       itemBuilder: (context, index) {
-            //         return GestureDetector(
-            //           onTap: () {
-            //             GetIt.I<ProvGame>().setLevel(index);
-            //             Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
-            //           },
-            //           child: Container(
-            //             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Constants.colorSecondary, boxShadow: [
-            //               BoxShadow(
-            //                 color: Colors.black.withOpacity(0.3),
-            //                 spreadRadius: 1,
-            //                 blurRadius: 5,
-            //                 offset: const Offset(0, 3), // changes position of shadow
-            //               )
-            //             ]),
-            //             alignment: Alignment.center,
-            //             child: Text(
-            //               "${index + 1}",
-            //               style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: "Marko One"),
-            //             ),
-            //           ),
-            //         );
-            //       },
-            //       itemCount: LocalData.levels.length,
-            //     )
-            //   ],
-            // )),
-         
+              ],
+            )),
           ],
         ));
+  }
+}
+
+class ItemLevel extends StatelessWidget {
+  const ItemLevel({super.key, required this.onTap, required this.level, required this.isLocked});
+
+  final Function() onTap;
+  final int level;
+  final bool isLocked;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: isLocked ? Constants.colorPrimary : Constants.colorSecondary, boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          )
+        ]),
+        alignment: Alignment.center,
+        child: 
+        isLocked ? const Icon(Icons.lock, color: Colors.white, size: 30,) : 
+        Text(
+          "$level",
+          style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: "Marko One"),
+        ),
+      ),
+    );
   }
 }
