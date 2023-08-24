@@ -39,7 +39,6 @@ dependencies:
   font_awesome_flutter: ^10.5.0
   audioplayers: ^5.0.0
   flutter_svg: ^2.0.7
-  google_fonts: ^5.1.0
   get_it: ^7.6.0
 
 dev_dependencies:

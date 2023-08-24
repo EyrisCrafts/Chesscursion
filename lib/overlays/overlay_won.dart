@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class OverlayWon extends StatefulWidget {
   const OverlayWon({Key? key}) : super(key: key);
@@ -30,9 +29,9 @@ class _OverlayWonState extends State<OverlayWon> {
         child: Container(
           alignment: Alignment.center,
           color: Colors.black.withOpacity(0.4),
-          child: Material(
+          child: const Material(
             color: Colors.transparent,
-            child: Text("You have Won !", style: GoogleFonts.permanentMarker(color: Colors.white, fontSize: 40)),
+            child: Text("You have Won !", style: TextStyle(color: Colors.white, fontSize: 40, fontFamily: "Marko One")),
           ),
         ),
       ),

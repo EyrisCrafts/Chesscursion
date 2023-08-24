@@ -73,8 +73,8 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                   
                   sliver: SliverGrid.builder(
                       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        mainAxisExtent: 100,
-                        maxCrossAxisExtent: 100,
+                        mainAxisExtent: 80,
+                        maxCrossAxisExtent: 80,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),

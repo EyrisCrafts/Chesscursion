@@ -237,12 +237,13 @@ class ProvGame extends ChangeNotifier {
     return ModelPosition(endPos.x, newY);
   }
 
+  // Remove all keys and locks
   void removeAllLocks() {
     for (int my = 0; my < 10; my++) {
       for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
-        if (board[my][mx].cellContains(EnumBoardPiece.lock)) {
-          board[my][mx].removeAt(0);
-          board[my][mx].insert(0, EnumBoardPiece.blank);
+        if (board[my][mx].cellContains(EnumBoardPiece.lock) || board[my][mx].cellContains(EnumBoardPiece.key)) {
+          board[my][mx].removeWhere((e) => e == EnumBoardPiece.lock);
+          board[my][mx].removeWhere((e) => e == EnumBoardPiece.key);
         }
       }
     }
