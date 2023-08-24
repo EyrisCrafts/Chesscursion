@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 // Unlocking of levels only when previous level is completed
 // Have a create new Level
 // Setup Community
-// Add picture
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
