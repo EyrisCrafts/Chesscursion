@@ -27,8 +27,19 @@ class ProvGame extends ChangeNotifier {
   late AudioCache audioCacheMove;
   bool isMusicAllowed = true;
 
+  bool isPieceOnBoard(EnumBoardPiece piece) {
+    for (int my = 0; my < Constants.numVerticalBoxes; my++) {
+      for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
+        if (board[my][mx].cellContains(piece)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   void onCellTapped(int x, int y, BuildContext context) {
-    if (GetIt.I<ProvCreator>().isCreatorMode) {
+    if (GetIt.I<ProvCreator>().isCreatorMode &&  !GetIt.I<ProvCreator>().isGameInCreatorMode) {
       if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
         board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
       } else {
@@ -186,6 +197,11 @@ class ProvGame extends ChangeNotifier {
       Overlay.of(context).insert(entry);
       await Future.delayed(const Duration(milliseconds: 3000), () {
         entry.remove();
+        if (GetIt.I<ProvCreator>().isGameInCreatorMode) {
+          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isGameInCreatorMode: false);
+          GetIt.I<ProvCreator>().resetBoard();
+          return;
+        }
         setLevel(++currentLevel);
         log("Level completed $currentLevel");
         GetIt.I<ProvUser>().setLevelsCompleted(currentLevel);

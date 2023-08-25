@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:chesscursion_creator/config/constants.dart';
 import 'package:chesscursion_creator/config/local_data.dart';
+import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_user.dart';
+import 'package:chesscursion_creator/screens/screen_creator.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_back.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_button.dart';
@@ -64,7 +66,8 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                             width: 200,
                             text: "Create your own",
                             onPressed: () {
-                              // TODO Send to creator
+                              GetIt.I<ProvCreator>().restartBoard();
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenCreator()));
                             })
                       ],
                     ),
@@ -81,20 +84,17 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                       ),
                       itemCount: LocalData.levels.length,
                       itemBuilder: (context, index) {
-                        return Consumer<ProvUser>(
-                          builder: (context,provUser,_) {
-                            final isLocked = provUser.levelsCompleted < index;
-                            return ItemLevel(
-                                onTap: () {
-                                  if (isLocked) return;
-                                  GetIt.I<ProvGame>().setLevel(index);
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
-                                },
-                                level: index + 1,
-                                isLocked: isLocked);
-                          }
-                        );
-                       
+                        return Consumer<ProvUser>(builder: (context, provUser, _) {
+                          final isLocked = provUser.levelsCompleted < index;
+                          return ItemLevel(
+                              onTap: () {
+                                if (isLocked) return;
+                                GetIt.I<ProvGame>().setLevel(index);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
+                              },
+                              level: index + 1,
+                              isLocked: isLocked);
+                        });
                       }),
                 )
               ],
@@ -125,12 +125,16 @@ class ItemLevel extends StatelessWidget {
           )
         ]),
         alignment: Alignment.center,
-        child: 
-        isLocked ? const Icon(Icons.lock, color: Colors.white, size: 30,) : 
-        Text(
-          "$level",
-          style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: "Marko One"),
-        ),
+        child: isLocked
+            ? const Icon(
+                Icons.lock,
+                color: Colors.white,
+                size: 30,
+              )
+            : Text(
+                "$level",
+                style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: "Marko One"),
+              ),
       ),
     );
   }

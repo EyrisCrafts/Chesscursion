@@ -43,4 +43,9 @@ extension ChessBoardUtilsList on List<EnumBoardPiece> {
     }
     return false;
   }
+
+  // Returns the pieces that can be put. i.e suggestion, pressed door etc cannot be put
+  List<EnumBoardPiece> getMaterialPieces() {
+    return EnumBoardPiece.values.where((element) => element != EnumBoardPiece.buttonPressed && element != EnumBoardPiece.suggested && element != EnumBoardPiece.doorActivated ).toList();
+  }
 }

@@ -10,13 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-
+import 'package:wakelock/wakelock.dart';
 
 //TODO
-// Change structure of levels to include metadata of each level 
+// TODO Have a create new Level
+// Change structure of levels to include metadata of each level
 // Fix music bug
-// Have a create new Level
 // Setup Community
 
 void main() async {
@@ -25,7 +26,7 @@ void main() async {
   await Hive.initFlutter();
   await GetIt.I<ServiceLocalStorage>().init();
   GetIt.I<ProvUser>().init();
-
+  Wakelock.enable();
 
   runApp(const MyApp());
 }
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<ProvUser>(
-            create: (context) => GetIt.I<ProvUser>(), 
+            create: (context) => GetIt.I<ProvUser>(),
           ),
           ChangeNotifierProvider<ProvPrefs>(
             create: (context) => GetIt.I<ProvPrefs>(),
@@ -56,6 +57,9 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
+          builder: (context, child) {
+            return OKToast(child: child!);
+          },
           debugShowCheckedModeBanner: false,
           title: 'ChessCursion Creator',
           theme: ThemeData(

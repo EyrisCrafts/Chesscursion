@@ -19,19 +19,19 @@ class Utils {
     return Icon(iconData, color: color, size: size == -1 ? cellSize - 5 : size);
   }
 
-  static Widget iconSvg(
-    String path,
-  ) {
+  static Widget iconSvg(String path, {bool isAlwaysCenter = false}) {
     double cellSize = GetIt.I<ProvPrefs>().cellSize;
 
     var alignment = Alignment.center;
     double? height = cellSize - 10;
-    if (path.contains("step")) {
-      alignment = Alignment.topCenter;
-      height = null;
-    } else if (path.contains("button")) {
-      alignment = Alignment.bottomCenter;
-      height = null;
+    if (!isAlwaysCenter) {
+      if (path.contains("step")) {
+        alignment = Alignment.topCenter;
+        height = null;
+      } else if (path.contains("button")) {
+        alignment = Alignment.bottomCenter;
+        height = null;
+      }
     }
 
     return AnimatedContainer(
@@ -47,12 +47,12 @@ class Utils {
     );
   }
 
-  static Widget getIcon(EnumBoardPiece piece, double cellSize) {
+  static Widget getIcon(EnumBoardPiece piece, double cellSize, {bool isAlwaysCenter = false}) {
     switch (piece) {
       case EnumBoardPiece.buttonPressed:
-        return iconSvg("assets/svgs/button_pressed.svg");
+        return iconSvg("assets/svgs/button_pressed.svg", isAlwaysCenter: isAlwaysCenter);
       case EnumBoardPiece.buttonUnpressed:
-        return iconSvg("assets/svgs/button_unpressed.svg");
+        return iconSvg("assets/svgs/button_unpressed.svg", isAlwaysCenter: isAlwaysCenter);
       case EnumBoardPiece.doorActivated:
         return iconSvg("assets/door_activated.svg");
       case EnumBoardPiece.doorDeactivated:
@@ -64,7 +64,7 @@ class Utils {
       case EnumBoardPiece.key:
         return iconSvg("assets/icon_key.svg");
       case EnumBoardPiece.step:
-        return iconSvg("assets/svgs/step.svg");
+        return iconSvg("assets/svgs/step.svg", isAlwaysCenter: isAlwaysCenter);
       // return iconWidget(FontAwesomeIcons.upLong, cellSize, color: Colors.black, size: cellSize - 2);
       case EnumBoardPiece.block:
         return iconSvg("assets/svgs/block.svg");

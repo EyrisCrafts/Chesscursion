@@ -3,6 +3,7 @@ import 'package:chesscursion_creator/screens/screen_levels.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wakelock/wakelock.dart';
 
 class ScreenMain extends StatefulWidget {
   const ScreenMain({super.key});
