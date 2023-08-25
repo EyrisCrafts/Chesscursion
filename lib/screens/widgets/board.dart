@@ -128,7 +128,7 @@ class Board extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
-
+                  if (isCreatorMode)
                     CustomIconButton(
                         onPressed: () {
                          GetIt.I<ProvCreator>().restartBoard();
