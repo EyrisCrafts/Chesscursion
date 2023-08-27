@@ -145,8 +145,9 @@ class ServiceApiManager extends IServiceApiManager {
       });
       
       final uid = FirebaseAuth.instance.currentUser!.uid;
+      
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        "upvoted": FieldValue.arrayUnion([levelId]),
+        "upvoted": [...levelsUpvoted, levelId],
         "id": uid
       });
     } catch (e) {
