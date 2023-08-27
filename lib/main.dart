@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 //TODO
-// Make black pieces kill
 // Fix music bug
 // Take pictures of app
 
