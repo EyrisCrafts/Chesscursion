@@ -215,7 +215,13 @@ class Board extends StatelessWidget {
                             GetIt.I<ProvCreator>().restartBoard();
                           },
                           icon: FontAwesomeIcons.arrowsRotate),
-
+                    if (GetIt.I<ProvGame>().isDeveloperMode)
+                      IconButton.outlined(
+                          onPressed: () {
+                            // Save board to disk? to clipboard?
+                            GetIt.I<ProvCreator>().saveBoard();
+                          },
+                          icon: const Icon(Icons.save_alt)),
                     const SizedBox(
                       height: 20,
                     ),
@@ -277,13 +283,7 @@ class Board extends StatelessWidget {
                                 ),
                               );
                             })),
-                    if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.developer)
-                      IconButton.outlined(
-                          onPressed: () {
-                            // Save board to disk? to clipboard?
-                            GetIt.I<ProvCreator>().saveBoard();
-                          },
-                          icon: const Icon(Icons.save_alt)),
+                    
                   ])),
             )
         ],

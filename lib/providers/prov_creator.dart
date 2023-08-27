@@ -11,15 +11,6 @@ class ProvCreator extends ChangeNotifier {
     translatedMainBoard = Utils.convertBoard(mainBoard);
   }
 
-  // This is to inform UI elements
-  // bool isCreatorMode = false;
-
-  // This is for only the board game control.
-  // bool isInGameMode = false;
-
-  // This is for logging the board structure in logs
-  // bool isDeveloper = false;
-
   EnumBoardPiece? selectedPiece;
   int creatorBoardSize = 100;
   List<List<List<EnumBoardPiece>>> translatedMainBoard = [];
