@@ -207,6 +207,11 @@ class Board extends StatelessWidget {
                     if (enumGameMode.isCreaterMode())
                       CustomIconButton(
                           onPressed: () {
+                            if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.creatorPlay) {
+                              GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
+                              GetIt.I<ProvCreator>().resetBoard();
+                              return;
+                            }
                             GetIt.I<ProvCreator>().restartBoard();
                           },
                           icon: FontAwesomeIcons.arrowsRotate),
