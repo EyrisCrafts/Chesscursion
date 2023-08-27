@@ -28,6 +28,7 @@ class ProvGame extends ChangeNotifier {
   bool isMusicAllowed = true;
 
   EnumGameMode enumGameMode = EnumGameMode.normal;
+  bool isDeveloperMode = false;
 
   void updateGameMode(EnumGameMode enumGameMode, {bool shouldNotify = true}) {
     this.enumGameMode = enumGameMode;
@@ -246,6 +247,9 @@ class ProvGame extends ChangeNotifier {
         if (enumGameMode == EnumGameMode.creatorPlay) {
           GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
           GetIt.I<ProvCreator>().resetBoard();
+          return;
+        } else if (enumGameMode == EnumGameMode.community) {
+          Navigator.maybePop(context);
           return;
         }
         setLevel(++currentLevel);

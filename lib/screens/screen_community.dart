@@ -1,12 +1,14 @@
 import 'dart:developer';
 
 import 'package:chesscursion_creator/config/constants.dart';
+import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/config/utils.dart';
 import 'package:chesscursion_creator/custom_toast.dart';
 import 'package:chesscursion_creator/models/model_community_level.dart';
 import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
+import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/screens/screen_creator.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_back.dart';
@@ -82,7 +84,7 @@ class _ScreenCommunityState extends State<ScreenCommunity> {
                               text: "Create your own",
                               onPressed: () {
                                 GetIt.I<ProvCreator>().restartBoard();
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenCreator()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenCreator()));
                               })
                         ],
                       ),
@@ -97,6 +99,7 @@ class _ScreenCommunityState extends State<ScreenCommunity> {
                               data: provCommunity.communityLevels[index],
                               key: ValueKey(provCommunity.communityLevels[index].id),
                               onTap: () {
+                                GetIt.I<ProvGame>().updateGameMode(EnumGameMode.community, shouldNotify: false);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(

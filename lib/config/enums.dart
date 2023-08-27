@@ -27,8 +27,7 @@ enum EnumGameMode {
   normal,
   creatorCreate,
   creatorPlay,
-  community,
-  developer
+  community
 }
 
 // Step Rules
