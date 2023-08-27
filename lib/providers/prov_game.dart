@@ -48,10 +48,14 @@ class ProvGame extends ChangeNotifier {
   void onCellTapped(int x, int y, BuildContext context) {
     // if in create mode and not creator play mode
     if (enumGameMode == EnumGameMode.creatorCreate) {
-      if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
+      if (GetIt.I<ProvCreator>().selectedPiece! == EnumBoardPiece.blank) {
+        board[y][x] = [EnumBoardPiece.blank];
+      } else if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
         board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
       } else {
-        board[y][x].add(GetIt.I<ProvCreator>().selectedPiece!);
+        if (!board[y][x].cellContains(GetIt.I<ProvCreator>().selectedPiece!)) {
+          board[y][x].add(GetIt.I<ProvCreator>().selectedPiece!);
+        }
       }
       notifyListeners();
       return;
@@ -107,12 +111,43 @@ class ProvGame extends ChangeNotifier {
             selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
 
             updateSuggestions();
+            WidgetsBinding.instance.addPostFrameCallback((a) {
+              checkIfBlackCanKill();
+            });
           }
         });
       }
       selectedPiece.isSelected = false;
       removeSuggestions();
     }
+    // Check if any black piece can kill the white piece
+    WidgetsBinding.instance.addPostFrameCallback((a) {
+      checkIfBlackCanKill();
+    });
+  }
+
+  void checkIfBlackCanKill() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      for (int my = 0; my < Constants.numVerticalBoxes; my++) {
+        for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
+          if (board[my][mx][0].isPieceBlack()) {
+            List<ModelPosition> possibles = Utils.getPossibleMove(board, ModelPosition(mx, my), isBlackTurn: true);
+            for (ModelPosition pos in possibles) {
+              if (pos.x == selectedPiece.position!.x && pos.y == selectedPiece.position!.y) {
+                // If destination is not a black piece, play move sound
+                audioPlayMove(isKill: true);
+
+                board[selectedPiece.position!.y][selectedPiece.position!.x][0] = board[my][mx][0];
+                board[my][mx][0] = EnumBoardPiece.blank;
+                removeSuggestions(shouldNotify: false);
+                notifyListeners();
+                return;
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   void checkPromotion(ModelPosition endPosition, BuildContext context) {
@@ -208,7 +243,7 @@ class ProvGame extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 2000), () {
         entry.remove();
         // Go to creator create mode
-        if (enumGameMode  == EnumGameMode.creatorPlay) {
+        if (enumGameMode == EnumGameMode.creatorPlay) {
           GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
           GetIt.I<ProvCreator>().resetBoard();
           return;
@@ -287,7 +322,7 @@ class ProvGame extends ChangeNotifier {
 
   bool isMoveAnimationInProgress = false;
 
-  void removeSuggestions() {
+  void removeSuggestions({bool shouldNotify = true}) {
     log("Removing suggestions");
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {

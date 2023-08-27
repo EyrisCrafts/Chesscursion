@@ -99,10 +99,7 @@ class Utils {
   }
 
   // Is the position where piece will be moved TO valid?
-  static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition) {
-    // If there is a activated door, return false
-    // if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) return false;
-
+  static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition, {bool isBlackTurn = false}) {
     if (!endPosition.isWithinBounds()) return false;
     if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) {
       log("Activated door is in the way");
@@ -111,13 +108,13 @@ class Utils {
 
     // Within bounds and empty or black piece or Step
     return (board[endPosition.y][endPosition.x][0].isEmpty() ||
-        board[endPosition.y][endPosition.x][0].isPieceBlack() ||
+        (isBlackTurn ? board[endPosition.y][endPosition.x][0].isPieceWhite() : board[endPosition.y][endPosition.x][0].isPieceBlack()) ||
         board[endPosition.y][endPosition.x][0].isStep() ||
         board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.key));
   }
 
   //All possible moves of a piece
-  static List<ModelPosition> getPossibleMove(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
+  static List<ModelPosition> getPossibleMove(List<List<List<EnumBoardPiece>>> board, ModelPosition position, {bool isBlackTurn = false}) {
     EnumBoardPiece piece = board[position.y][position.x][0];
     List<ModelPosition> toReturn = [];
     switch (piece) {
@@ -132,12 +129,52 @@ class Utils {
       case EnumBoardPiece.step:
       case EnumBoardPiece.suggested:
       case EnumBoardPiece.blackKing:
-      case EnumBoardPiece.blackQueen:
-      case EnumBoardPiece.blackBishop:
-      case EnumBoardPiece.blackKnight:
-      case EnumBoardPiece.blackRook:
       case EnumBoardPiece.blackPawn:
         return [];
+      case EnumBoardPiece.blackKnight:
+        final ModelPosition pos1 = ModelPosition(position.x - 1, position.y - 2);
+        if (isPieceDestinationValid(board, pos1, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos1);
+        }
+        final ModelPosition pos2 = ModelPosition(position.x + 1, position.y - 2);
+        if (isPieceDestinationValid(board, pos2, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos2);
+        }
+        final ModelPosition pos3 = ModelPosition(position.x - 1, position.y + 2);
+        if (isPieceDestinationValid(board, pos3, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos3);
+        }
+        final ModelPosition pos4 = ModelPosition(position.x + 1, position.y + 2);
+        if (isPieceDestinationValid(board, pos4, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos4);
+        }
+
+        final ModelPosition pos5 = ModelPosition(position.x + 2, position.y + 1);
+        if (isPieceDestinationValid(board, pos5, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos5);
+        }
+
+        final ModelPosition pos6 = ModelPosition(position.x + 2, position.y - 1);
+        if (isPieceDestinationValid(board, pos6, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos6);
+        }
+
+        final ModelPosition pos7 = ModelPosition(position.x - 2, position.y - 1);
+        if (isPieceDestinationValid(board, pos7, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos7);
+        }
+
+        final ModelPosition pos8 = ModelPosition(position.x - 2, position.y + 1);
+        if (isPieceDestinationValid(board, pos8, isBlackTurn: isBlackTurn)) {
+          toReturn.add(pos8);
+        }
+        return toReturn;
+      case EnumBoardPiece.blackBishop:
+        return getPossibleDiagonals(board, position, isBlackTurn: isBlackTurn);
+      case EnumBoardPiece.blackRook:
+        return getPossibleStraights(board, position, isBlackTurn: isBlackTurn);
+      case EnumBoardPiece.blackQueen:
+        return [...getPossibleDiagonals(board, position, isBlackTurn: isBlackTurn), ...getPossibleStraights(board, position, isBlackTurn: isBlackTurn)];
       case EnumBoardPiece.whitePawn:
         // Only top if top is empty or step
         if (!board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
@@ -162,7 +199,6 @@ class Utils {
       case EnumBoardPiece.whiteKnight:
         final ModelPosition pos1 = ModelPosition(position.x - 1, position.y - 2);
         if (isPieceDestinationValid(board, pos1)) {
-          // if (pos1.isWithinBounds() && (board[pos1.y][pos1.x].isEmpty() || board[pos1.y][pos1.x].isPieceBlack())) {
           toReturn.add(pos1);
         }
         final ModelPosition pos2 = ModelPosition(position.x + 1, position.y - 2);
@@ -233,26 +269,20 @@ class Utils {
     return translatedBoard;
   }
 
-  static List<ModelPosition> getPossibleStraights(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
+  static List<ModelPosition> getPossibleStraights(List<List<List<EnumBoardPiece>>> board, ModelPosition position, {bool isBlackTurn = false}) {
     List<ModelPosition> toReturn = [];
     //Left all the way
     for (int i = position.x - 1; i != -1; i--) {
-      if (isPieceDestinationValid(board, ModelPosition(i, position.y))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, position.y), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, position.y));
-        // } else if (board[position.y][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, position.y));
-        //   break;
       } else {
         break;
       }
     }
     //Right all the way
     for (int i = position.x + 1; i != Constants.numHorizontalBoxes; i++) {
-      if (isPieceDestinationValid(board, ModelPosition(i, position.y))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, position.y), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, position.y));
-        // } else if (board[position.y][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, position.y));
-        //   break;
       } else {
         break;
       }
@@ -260,22 +290,16 @@ class Utils {
 
     //Bottom all the way
     for (int i = position.y + 1; i != 10; i++) {
-      if (isPieceDestinationValid(board, ModelPosition(position.x, i))) {
+      if (isPieceDestinationValid(board, ModelPosition(position.x, i), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(position.x, i));
-        // } else if (board[i][position.x].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(position.x, i));
-        //   break;
       } else {
         break;
       }
     }
     //Top all the way
     for (int i = position.y - 1; i != -1; i--) {
-      if (isPieceDestinationValid(board, ModelPosition(position.x, i))) {
+      if (isPieceDestinationValid(board, ModelPosition(position.x, i), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(position.x, i));
-        // } else if (board[i][position.x].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(position.x, i));
-        //   break;
       } else {
         break;
       }
@@ -284,48 +308,36 @@ class Utils {
     return toReturn;
   }
 
-  static List<ModelPosition> getPossibleDiagonals(List<List<List<EnumBoardPiece>>> board, ModelPosition position) {
+  static List<ModelPosition> getPossibleDiagonals(List<List<List<EnumBoardPiece>>> board, ModelPosition position, {bool isBlackTurn = false}) {
     List<ModelPosition> toReturn = [];
     //Bottom right
     for (int i = position.x + 1, j = position.y + 1; i != Constants.numHorizontalBoxes && j != 10; i++, j++) {
-      if (isPieceDestinationValid(board, ModelPosition(i, j))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, j), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, j));
-        // } else if (board[j][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, j));
-        //   break;
       } else {
         break;
       }
     }
     //Top right
     for (int i = position.x + 1, j = position.y - 1; i != Constants.numHorizontalBoxes && j != -1; i++, j--) {
-      if (isPieceDestinationValid(board, ModelPosition(i, j))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, j), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, j));
-        // } else if (board[j][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, j));
-        //   break;
       } else {
         break;
       }
     }
     //Bottom left
     for (int i = position.x - 1, j = position.y + 1; i != -1 && j != 10; i--, j++) {
-      if (isPieceDestinationValid(board, ModelPosition(i, j))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, j), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, j));
-        // } else if (board[j][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, j));
-        //   break;
       } else {
         break;
       }
     }
     //Top left
     for (int i = position.x - 1, j = position.y - 1; i != -1 && j != -1; i--, j--) {
-      if (isPieceDestinationValid(board, ModelPosition(i, j))) {
+      if (isPieceDestinationValid(board, ModelPosition(i, j), isBlackTurn: isBlackTurn)) {
         toReturn.add(ModelPosition(i, j));
-        // } else if (board[j][i].isPieceBlack()) {
-        //   toReturn.add(ModelPosition(i, j));
-        //   break;
       } else {
         break;
       }
