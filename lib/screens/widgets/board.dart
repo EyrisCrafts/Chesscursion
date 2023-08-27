@@ -29,10 +29,10 @@ class Board extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    final isCreatorMode = context.read<ProvCreator>().isCreatorMode;
+    final enumGameMode = context.read<ProvGame>().enumGameMode;
     double menuSize = (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) - 10;
     Alignment boardAlignment = Alignment.centerRight;
-    if (isCreatorMode) {
+    if (enumGameMode.isCreaterMode()) {
       menuSize = (screenSize.width - context.read<ProvPrefs>().cellSize * Constants.numHorizontalBoxes) / 2;
       boardAlignment = Alignment.center;
     }
@@ -67,7 +67,7 @@ class Board extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    if (isCreatorMode)
+                    if (enumGameMode.isCreaterMode())
                       CustomButton(
                           inverseColors: true,
                           text: "Share",
@@ -95,7 +95,7 @@ class Board extends StatelessWidget {
                               List<List<List<int>>> board = [];
 
                               // If in play mode, Take board from tmp
-                              if (GetIt.I<ProvCreator>().isInGameMode) {
+                              if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.creatorPlay) {
                                 board = Utils.convertBoardToRaw(GetIt.I<ProvCreator>().tmpBoard);
                               } else {
                                 // Otherwise take it from the game
@@ -141,7 +141,7 @@ class Board extends StatelessWidget {
                             fontSize: 15);
                       }),
                     const Spacer(),
-                    if (!isCreatorMode && communityLevel == null)
+                    if (!enumGameMode.isCreaterMode() && communityLevel == null)
                       Consumer<ProvGame>(
                         builder: (context, value, child) {
                           return Text("Level\n${value.currentLevel + 1}", textAlign: TextAlign.center, style: const TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'Marko One'));
@@ -150,7 +150,7 @@ class Board extends StatelessWidget {
                     if (communityLevel != null) Text(communityLevel!.title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'Marko One')),
 
                     const Spacer(),
-                    if (!isCreatorMode)
+                    if (!enumGameMode.isCreaterMode())
                       Row(
                         children: [
                           Expanded(
@@ -177,26 +177,34 @@ class Board extends StatelessWidget {
                           ),
                         ],
                       ),
-                    if (isCreatorMode)
-                      Consumer<ProvCreator>(builder: (context, provCreator, _) {
+                    if (enumGameMode.isCreaterMode())
+                      Consumer<ProvGame>(builder: (context, provGame, _) {
                         return CustomIconButton(
-                            isSelected: provCreator.isInGameMode,
+                            isSelected: provGame.enumGameMode == EnumGameMode.creatorPlay,
                             onPressed: () {
+                              final gameMode = GetIt.I<ProvGame>().enumGameMode;
+                              // If in creator play mode, restart board
+                              if (gameMode == EnumGameMode.creatorPlay) {
+                                GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
+                                GetIt.I<ProvCreator>().resetBoard();
+                                return;
+                              }
                               // Must have at least one black king
                               if (!GetIt.I<ProvGame>().isPieceOnBoard(EnumBoardPiece.blackKing)) {
                                 // Toast if no white king
                                 CustomToast.showToast("Must have at least one black king", leadingIcon: const Icon(Icons.warning, color: Constants.colorSecondary));
                               } else {
-                                GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isInGameMode: !provCreator.isInGameMode);
+                                GetIt.I<ProvCreator>().setCreatorMode(
+                                    enumGameMode: gameMode == EnumGameMode.creatorCreate ? EnumGameMode.creatorPlay : EnumGameMode.creatorCreate, shouldNotify: true);
                               }
                             },
                             icon: FontAwesomeIcons.play);
                       }),
-                    if (isCreatorMode)
+                    if (enumGameMode.isCreaterMode())
                       const SizedBox(
                         height: 20,
                       ),
-                    if (isCreatorMode)
+                    if (enumGameMode.isCreaterMode())
                       CustomIconButton(
                           onPressed: () {
                             GetIt.I<ProvCreator>().restartBoard();
@@ -221,7 +229,7 @@ class Board extends StatelessWidget {
                 children: [
                   for (int ind = 0; ind < Constants.numVerticalBoxes; ind++)
                     Row(
-                      mainAxisAlignment: isCreatorMode ? MainAxisAlignment.center : MainAxisAlignment.end,
+                      mainAxisAlignment: enumGameMode.isCreaterMode() ? MainAxisAlignment.center : MainAxisAlignment.end,
                       children: [
                         for (int index = 0; index < Constants.numHorizontalBoxes; index++)
                           Consumer<ProvGame>(builder: (context, game, _) {
@@ -242,7 +250,7 @@ class Board extends StatelessWidget {
           ),
 
           // List of Pieces that can be put on board
-          if (isCreatorMode)
+          if (enumGameMode.isCreaterMode())
             Align(
               alignment: Alignment.centerRight,
               child: Container(
@@ -264,7 +272,7 @@ class Board extends StatelessWidget {
                                 ),
                               );
                             })),
-                    if (GetIt.I<ProvCreator>().isDeveloper)
+                    if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.developer)
                       IconButton.outlined(
                           onPressed: () {
                             // Save board to disk? to clipboard?

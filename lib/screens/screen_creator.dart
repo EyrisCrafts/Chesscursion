@@ -1,6 +1,9 @@
 import 'dart:developer';
 
+import 'package:chesscursion_creator/config/enums.dart';
+import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
+import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/screens/widgets/board.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +20,15 @@ class _ScreenCreatorState extends State<ScreenCreator> {
   @override
   void initState() {
     super.initState();
-    GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isInGameMode: false, shouldNotify: false);
+    GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate, shouldNotify: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (GetIt.I<ProvCreator>().isCreatorMode) {
-          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: false, isInGameMode: false);
+        if (GetIt.I<ProvGame>().enumGameMode.isCreaterMode()) {
+          GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.normal);
           return true;
         }
         return true;

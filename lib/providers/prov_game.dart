@@ -27,6 +27,12 @@ class ProvGame extends ChangeNotifier {
   late AudioCache audioCacheMove;
   bool isMusicAllowed = true;
 
+  EnumGameMode enumGameMode = EnumGameMode.normal;
+
+  void updateGameMode(EnumGameMode enumGameMode, {bool shouldNotify = true}) {
+    this.enumGameMode = enumGameMode;
+    notifyListeners();
+  }
 
   bool isPieceOnBoard(EnumBoardPiece piece) {
     for (int my = 0; my < Constants.numVerticalBoxes; my++) {
@@ -40,7 +46,8 @@ class ProvGame extends ChangeNotifier {
   }
 
   void onCellTapped(int x, int y, BuildContext context) {
-    if (GetIt.I<ProvCreator>().isCreatorMode && !GetIt.I<ProvCreator>().isInGameMode) {
+    // if in create mode and not creator play mode
+    if (enumGameMode == EnumGameMode.creatorCreate) {
       if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
         board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
       } else {
@@ -200,8 +207,9 @@ class ProvGame extends ChangeNotifier {
       Overlay.of(context).insert(entry);
       await Future.delayed(const Duration(milliseconds: 2000), () {
         entry.remove();
-        if (GetIt.I<ProvCreator>().isInGameMode) {
-          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isInGameMode: false);
+        // Go to creator create mode
+        if (enumGameMode  == EnumGameMode.creatorPlay) {
+          GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
           GetIt.I<ProvCreator>().resetBoard();
           return;
         }

@@ -1,4 +1,5 @@
 import 'package:chesscursion_creator/config/enums.dart';
+import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/config/utils.dart';
 import 'package:chesscursion_creator/models/model_community_level.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
@@ -25,7 +26,7 @@ class _ScreenGameState extends State<ScreenGame> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       GetIt.I<ProvGame>().audioPlayMusic();
     });
-    if (GetIt.I<ProvCreator>().isCreatorMode) {
+    if (GetIt.I<ProvGame>().enumGameMode.isCreaterMode()) {
       GetIt.I<ProvCreator>().restartBoard(shouldNotify: false);
     }
     if (widget.communityLevel != null) {
@@ -41,7 +42,7 @@ class _ScreenGameState extends State<ScreenGame> {
         body: Column(
           children: [
              Expanded(child: Board(communityLevel: widget.communityLevel,)),
-            if (GetIt.I<ProvCreator>().isCreatorMode)
+            if (GetIt.I<ProvGame>().enumGameMode.isCreaterMode())
               Container(
                   height: 100,
                   color: Colors.pink.withOpacity(0.2),

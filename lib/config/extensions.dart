@@ -74,3 +74,7 @@ extension DateHelper on DateTime {
     }
   }
 }
+
+extension GameTypeHelper on EnumGameMode {
+  bool isCreaterMode() => this == EnumGameMode.creatorCreate || this == EnumGameMode.creatorPlay;
+}
