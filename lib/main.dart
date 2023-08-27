@@ -18,11 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 //TODO
-// Check upvote count not updating in users
 // Make black pieces kill
-// Change structure of levels to include metadata of each level
 // Fix music bug
-// Update app name
 // Take pictures of app
 
 void main() async {
