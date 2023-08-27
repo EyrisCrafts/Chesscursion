@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 //TODO
-// Setup Community
+// Check upvote count not updating in users
 // Make black pieces kill
 // Change structure of levels to include metadata of each level
 // Fix music bug

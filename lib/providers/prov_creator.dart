@@ -12,24 +12,24 @@ class ProvCreator extends ChangeNotifier {
   }
 
   // This is to inform UI elements
-  bool isCreatorMode = false;
+  // bool isCreatorMode = false;
 
   // This is for only the board game control.
-  bool isInGameMode = false;
+  // bool isInGameMode = false;
 
   // This is for logging the board structure in logs
-  bool isDeveloper = false;
+  // bool isDeveloper = false;
 
   EnumBoardPiece? selectedPiece;
   int creatorBoardSize = 100;
   List<List<List<EnumBoardPiece>>> translatedMainBoard = [];
   List<List<List<EnumBoardPiece>>> tmpBoard = [];
 
-  void setCreatorMode({bool isCreatorMode = false, bool isInGameMode = false, bool shouldNotify = true}) {
-    this.isCreatorMode = isCreatorMode;
-    this.isInGameMode = isInGameMode;
-    if (isInGameMode) {
-      tmpBoard.clear();
+  void setCreatorMode({EnumGameMode enumGameMode = EnumGameMode.normal, bool shouldNotify = true}) {
+    GetIt.I<ProvGame>().updateGameMode(enumGameMode, shouldNotify: shouldNotify);
+    if (enumGameMode == EnumGameMode.creatorPlay) {
+      tmpBoard = [];
+
       for (int i = 0; i < translatedMainBoard.length; i++) {
         if (tmpBoard.length <= i) {
           tmpBoard.add([]);
@@ -48,7 +48,7 @@ class ProvCreator extends ChangeNotifier {
       }
     }
     if (shouldNotify) {
-    notifyListeners();
+      notifyListeners();
     }
   }
 
