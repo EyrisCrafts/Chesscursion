@@ -20,7 +20,7 @@ import 'package:wakelock/wakelock.dart';
 //TODO
 // Fix music bug
 // Take pictures of app
-
+// Add more levels
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
