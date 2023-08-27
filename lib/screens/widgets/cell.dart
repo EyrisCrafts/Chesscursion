@@ -6,27 +6,32 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Cell extends StatelessWidget {
-  const Cell({Key? key, required this.index, required this.cellContent, required this.onTap}) : super(key: key);
+  const Cell({Key? key, required this.index, required this.cellContent, required this.onTap, this.size = 0}) : super(key: key);
   final int index;
   final List<EnumBoardPiece> cellContent;
   final Function() onTap;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     double cellSize = context.read<ProvPrefs>().cellSize;
+    if (size != 0) {
+      cellSize = size;
+    }
     final stackContent = cellContent.toList();
     // swap position of step to 0
     final stepPosition = stackContent.indexOf(EnumBoardPiece.step);
     if (stepPosition != -1) {
       stackContent.insert(0, stackContent.removeAt(stepPosition));
     }
-    
+
     final buttonPosition = stackContent.indexOf(EnumBoardPiece.buttonPressed);
     if (buttonPosition != -1) {
       stackContent.insert(0, stackContent.removeAt(buttonPosition));
     }
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.translucent,
       child: Container(
         height: cellSize,
         width: cellSize,

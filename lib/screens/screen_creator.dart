@@ -17,7 +17,7 @@ class _ScreenCreatorState extends State<ScreenCreator> {
   @override
   void initState() {
     super.initState();
-    GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isGameInCreatorMode: false);
+    GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isInGameMode: false, shouldNotify: false);
   }
 
   @override
@@ -25,7 +25,7 @@ class _ScreenCreatorState extends State<ScreenCreator> {
     return WillPopScope(
       onWillPop: () async {
         if (GetIt.I<ProvCreator>().isCreatorMode) {
-          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: false, isGameInCreatorMode: false);
+          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: false, isInGameMode: false);
           return true;
         }
         return true;

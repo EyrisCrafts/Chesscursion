@@ -1,4 +1,6 @@
 import 'package:chesscursion_creator/config/service_locator.dart';
+import 'package:chesscursion_creator/firebase_options.dart';
+import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
@@ -6,6 +8,7 @@ import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/screen_main.dart';
 import 'package:chesscursion_creator/services/service_local_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -15,10 +18,12 @@ import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 //TODO
-// TODO Have a create new Level
+// Setup Community
+// Make black pieces kill
 // Change structure of levels to include metadata of each level
 // Fix music bug
-// Setup Community
+// Update app name
+// Take pictures of app
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +32,10 @@ void main() async {
   await GetIt.I<ServiceLocalStorage>().init();
   GetIt.I<ProvUser>().init();
   Wakelock.enable();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
@@ -48,6 +57,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<ProvPrefs>(
             create: (context) => GetIt.I<ProvPrefs>(),
+          ),
+          ChangeNotifierProvider<ProvCommunity>(
+            create: (context) => GetIt.I<ProvCommunity>(),
           ),
           ChangeNotifierProvider<ProvGame>(
             create: (context) => GetIt.I<ProvGame>(),
