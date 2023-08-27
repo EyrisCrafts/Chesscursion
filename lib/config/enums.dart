@@ -23,6 +23,14 @@ enum EnumBoardPiece {
   doorDeactivated
 }
 
+enum EnumGameMode {
+  normal,
+  creatorCreate,
+  creatorPlay,
+  community,
+  developer
+}
+
 // Step Rules
 
 // 1. Pawn can click on the step, and go over it.

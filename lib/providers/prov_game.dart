@@ -27,6 +27,7 @@ class ProvGame extends ChangeNotifier {
   late AudioCache audioCacheMove;
   bool isMusicAllowed = true;
 
+
   bool isPieceOnBoard(EnumBoardPiece piece) {
     for (int my = 0; my < Constants.numVerticalBoxes; my++) {
       for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
@@ -39,7 +40,7 @@ class ProvGame extends ChangeNotifier {
   }
 
   void onCellTapped(int x, int y, BuildContext context) {
-    if (GetIt.I<ProvCreator>().isCreatorMode &&  !GetIt.I<ProvCreator>().isGameInCreatorMode) {
+    if (GetIt.I<ProvCreator>().isCreatorMode && !GetIt.I<ProvCreator>().isInGameMode) {
       if (GetIt.I<ProvCreator>().selectedPiece!.isPieceBlack() || GetIt.I<ProvCreator>().selectedPiece!.isPieceWhite() || GetIt.I<ProvCreator>().selectedPiece!.isBlock()) {
         board[y][x][0] = GetIt.I<ProvCreator>().selectedPiece!;
       } else {
@@ -169,10 +170,12 @@ class ProvGame extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBoard(List<List<List<EnumBoardPiece>>> newBoard) {
+  void setBoard(List<List<List<EnumBoardPiece>>> newBoard, {bool shouldNotify = true}) {
     board = newBoard;
     selectedPiece.isSelected = false;
-    notifyListeners();
+    if (shouldNotify) {
+      notifyListeners();
+    }
   }
 
   bool blackExists() {
@@ -191,14 +194,14 @@ class ProvGame extends ChangeNotifier {
   void winCheckCondition(BuildContext context) async {
     if (checkingWinCondition) return; // To make sure this function is only called once
     checkingWinCondition = true;
-    await Future.delayed(const Duration(milliseconds: 700));
+    await Future.delayed(const Duration(milliseconds: 200));
     if (!blackExists()) {
       OverlayEntry entry = OverlayEntry(builder: (context) => const OverlayWon());
       Overlay.of(context).insert(entry);
-      await Future.delayed(const Duration(milliseconds: 3000), () {
+      await Future.delayed(const Duration(milliseconds: 2000), () {
         entry.remove();
-        if (GetIt.I<ProvCreator>().isGameInCreatorMode) {
-          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isGameInCreatorMode: false);
+        if (GetIt.I<ProvCreator>().isInGameMode) {
+          GetIt.I<ProvCreator>().setCreatorMode(isCreatorMode: true, isInGameMode: false);
           GetIt.I<ProvCreator>().resetBoard();
           return;
         }
