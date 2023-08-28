@@ -1,6 +1,5 @@
-
-
 import 'package:chesscursion_creator/config/constants.dart';
+import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/local_data.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
@@ -67,7 +66,9 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                             text: "Create your own",
                             onPressed: () {
                               GetIt.I<ProvCreator>().restartBoard();
+                              GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate, shouldNotify: false);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenCreator()));
+                              
                             })
                       ],
                     ),
