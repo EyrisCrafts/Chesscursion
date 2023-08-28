@@ -37,4 +37,7 @@ class ModelPosition {
       y ?? this.y,
     );
   }
+
+  @override
+  String toString() => 'ModelPosition(x: $x, y: $y)';
 }

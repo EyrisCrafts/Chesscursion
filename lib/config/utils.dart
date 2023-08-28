@@ -102,7 +102,9 @@ class Utils {
   static bool isPieceDestinationValid(List<List<List<EnumBoardPiece>>> board, ModelPosition endPosition, {bool isBlackTurn = false}) {
     if (!endPosition.isWithinBounds()) return false;
     if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.doorActivated)) {
-      log("Activated door is in the way");
+      return false;
+    }
+    if (board[endPosition.y][endPosition.x].cellContains(EnumBoardPiece.lock)) {
       return false;
     }
 
@@ -177,11 +179,11 @@ class Utils {
         return [...getPossibleDiagonals(board, position, isBlackTurn: isBlackTurn), ...getPossibleStraights(board, position, isBlackTurn: isBlackTurn)];
       case EnumBoardPiece.whitePawn:
         // Only top if top is empty or step
-        if (!board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
+        if (isPieceDestinationValid(board, ModelPosition(position.x, position.y - 1)) && !board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
           return [ModelPosition(position.x, position.y - 1)];
         }
 
-        if (board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
+        if (isPieceDestinationValid(board, ModelPosition(position.x, position.y - 1)) && board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
           return [ModelPosition(position.x, position.y - 1), ModelPosition(position.x, position.y - 2)];
         }
 
