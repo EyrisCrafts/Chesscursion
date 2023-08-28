@@ -298,6 +298,7 @@ class ProvGame extends ChangeNotifier {
       if (board[newY][endPos.x][0].isPieceBlack()) {
         audioPlayMove(isKill: true);
       }
+      
       if (board[newY][endPos.x].cellContains(EnumBoardPiece.key)) {
         // TODO Key sound
         audioPlayMove(isKill: true);
@@ -307,6 +308,7 @@ class ProvGame extends ChangeNotifier {
       board[newY][endPos.x][0] = piece;
       notifyListeners();
       entry.remove();
+      winCheckCondition(context);
     });
     return ModelPosition(endPos.x, newY);
   }
