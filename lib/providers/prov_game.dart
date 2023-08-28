@@ -221,10 +221,10 @@ class ProvGame extends ChangeNotifier {
     }
   }
 
-  bool blackExists() {
+  bool kingExists() {
     for (int my = 0; my < 10; my++) {
       for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
-        if (board[my][mx][0].isPieceBlack()) {
+        if (board[my][mx][0] == EnumBoardPiece.blackKing) {
           return true;
         }
       }
@@ -238,7 +238,7 @@ class ProvGame extends ChangeNotifier {
     if (checkingWinCondition) return; // To make sure this function is only called once
     checkingWinCondition = true;
     await Future.delayed(const Duration(milliseconds: 200));
-    if (!blackExists()) {
+    if (!kingExists()) {
       OverlayEntry entry = OverlayEntry(builder: (context) => const OverlayWon());
       Overlay.of(context).insert(entry);
       await Future.delayed(const Duration(milliseconds: 2000), () {

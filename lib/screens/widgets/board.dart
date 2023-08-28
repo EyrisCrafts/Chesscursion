@@ -215,7 +215,7 @@ class Board extends StatelessWidget {
                             GetIt.I<ProvCreator>().restartBoard();
                           },
                           icon: FontAwesomeIcons.arrowsRotate),
-                    if (GetIt.I<ProvGame>().isDeveloperMode)
+                    // if (GetIt.I<ProvGame>().isDeveloperMode)
                       IconButton.outlined(
                           onPressed: () {
                             // Save board to disk? to clipboard?
