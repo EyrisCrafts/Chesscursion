@@ -1,7 +1,9 @@
-import 'package:chesscursion_creator/config/constants.dart';
-import 'package:chesscursion_creator/providers/prov_game.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+
+import 'package:chesscursion_creator/config/constants.dart';
+import 'package:chesscursion_creator/providers/prov_game.dart';
 
 class ModelPosition {
   int x;
@@ -25,4 +27,14 @@ class ModelPosition {
 
   @override
   int get hashCode => (x.toString() + y.toString()).hashCode;
+
+  ModelPosition copyWith({
+    int? x,
+    int? y,
+  }) {
+    return ModelPosition(
+      x ?? this.x,
+      y ?? this.y,
+    );
+  }
 }
