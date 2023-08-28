@@ -47,6 +47,7 @@ class ProvGame extends ChangeNotifier {
   }
 
   void onCellTapped(int x, int y, BuildContext context) {
+    final oldPosition = selectedPiece.position?.copyWith();
     // if in create mode and not creator play mode
     if (enumGameMode == EnumGameMode.creatorCreate) {
       if (GetIt.I<ProvCreator>().selectedPiece! == EnumBoardPiece.blank) {
@@ -110,6 +111,7 @@ class ProvGame extends ChangeNotifier {
             selectedPiece.isSelected = true;
             selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
             selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
+            stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
 
             updateSuggestions();
             WidgetsBinding.instance.addPostFrameCallback((a) {
@@ -125,6 +127,19 @@ class ProvGame extends ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((a) {
       checkIfBlackCanKill();
     });
+  }
+
+  // Check when a piece has some other piece on top of it
+  void stackingGravityCheck(ModelPosition stackPoint) {
+    // If a white piece on top, and white space on bottom
+    if ((stackPoint.y - 1).isWithinVerticalBounds() && board[stackPoint.y-1][stackPoint.x][0].isPieceWhite()) {
+      if (board[stackPoint.y][stackPoint.x][0].isEmpty()) {
+        // Move the piece down
+        board[stackPoint.y][stackPoint.x][0] = board[stackPoint.y - 1][stackPoint.x][0];
+        board[stackPoint.y - 1][stackPoint.x][0] = EnumBoardPiece.blank;
+        stackingGravityCheck(ModelPosition(stackPoint.x, stackPoint.y - 1));
+      }
+    }
   }
 
   void checkIfBlackCanKill() {
@@ -298,7 +313,7 @@ class ProvGame extends ChangeNotifier {
       if (board[newY][endPos.x][0].isPieceBlack()) {
         audioPlayMove(isKill: true);
       }
-      
+
       if (board[newY][endPos.x].cellContains(EnumBoardPiece.key)) {
         // TODO Key sound
         audioPlayMove(isKill: true);
