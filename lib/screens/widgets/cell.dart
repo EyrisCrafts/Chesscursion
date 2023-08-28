@@ -29,6 +29,11 @@ class Cell extends StatelessWidget {
     if (buttonPosition != -1) {
       stackContent.insert(0, stackContent.removeAt(buttonPosition));
     }
+    
+    final doorPosition = stackContent.indexOf(EnumBoardPiece.doorDeactivated);
+    if (doorPosition != -1) {
+      stackContent.insert(0, stackContent.removeAt(doorPosition));
+    }
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.translucent,

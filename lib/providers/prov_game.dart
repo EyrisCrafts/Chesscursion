@@ -29,7 +29,7 @@ class ProvGame extends ChangeNotifier {
 
   EnumGameMode enumGameMode = EnumGameMode.normal;
   bool isDeveloperMode = false;
-
+  
   void updateGameMode(EnumGameMode enumGameMode, {bool shouldNotify = true}) {
     this.enumGameMode = enumGameMode;
     notifyListeners();
@@ -114,6 +114,7 @@ class ProvGame extends ChangeNotifier {
             stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
 
             updateSuggestions();
+            buttonCheckForDestination();
             WidgetsBinding.instance.addPostFrameCallback((a) {
               checkIfBlackCanKill();
             });
@@ -132,8 +133,8 @@ class ProvGame extends ChangeNotifier {
   // Check when a piece has some other piece on top of it
   void stackingGravityCheck(ModelPosition stackPoint) {
     // If a white piece on top, and white space on bottom
-    if ((stackPoint.y - 1).isWithinVerticalBounds() && board[stackPoint.y-1][stackPoint.x][0].isPieceWhite()) {
-      if (board[stackPoint.y][stackPoint.x][0].isEmpty()) {
+    if ((stackPoint.y - 1).isWithinVerticalBounds() && board[stackPoint.y - 1][stackPoint.x][0].isPieceWhite()) {
+      if (board[stackPoint.y][stackPoint.x][0].isEmpty() && !board[stackPoint.y][stackPoint.x].cellContains(EnumBoardPiece.step)) {
         // Move the piece down
         board[stackPoint.y][stackPoint.x][0] = board[stackPoint.y - 1][stackPoint.x][0];
         board[stackPoint.y - 1][stackPoint.x][0] = EnumBoardPiece.blank;
@@ -275,6 +276,19 @@ class ProvGame extends ChangeNotifier {
     checkingWinCondition = false;
   }
 
+  ModelPosition findBottom(ModelPosition currentPosition) {
+    log("finding bottom");
+    if ((currentPosition.y + 1).isWithinVerticalBounds() && board[currentPosition.y + 1][currentPosition.x].cellContains(EnumBoardPiece.step)) {
+      return currentPosition;
+    }
+    // if below is valid
+    if (!Utils.isPieceDestinationValid(board, ModelPosition(currentPosition.x, currentPosition.y + 1))) {
+      return currentPosition;
+    } else {
+      return findBottom(ModelPosition(currentPosition.x, currentPosition.y + 1));
+    }
+  }
+
   Future<ModelPosition> gravitycheck(
     BuildContext context,
     ModelPosition endPos,
@@ -283,22 +297,29 @@ class ProvGame extends ChangeNotifier {
     if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack() || board[endPos.y + 1][endPos.x].cellContains(EnumBoardPiece.key)))) {
       return endPos;
     }
-    if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step)) {
+    if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step) || board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.lock) || board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.doorActivated)) {
+      log("ca");
       return endPos;
     }
+   
+    log("c1 $endPos");
     //Get old piece
     EnumBoardPiece piece = board[endPos.y][endPos.x][0];
     board[endPos.y][endPos.x][0] = EnumBoardPiece.blank;
     notifyListeners();
     //Calculat the last position
     int newY = endPos.y + 1;
+    // ModelPosition newPos = findBottom(endPos);
+    // int newY = newPos.y;
     while (newY + 1 != 10 && (board[newY + 1][endPos.x][0].isEmpty() || board[newY + 1][endPos.x][0].isPieceBlack())) {
-      if (board[newY + 1][endPos.x].cellContains(EnumBoardPiece.step)) {
+      if (board[newY + 1][endPos.x].cellContains(EnumBoardPiece.step) || board[newY + 1][endPos.x].cellContains(EnumBoardPiece.lock)) {
         break;
       }
+
       newY++;
     }
     if (newY == 10) newY--;
+
     OverlayEntry entry;
     entry = OverlayEntry(
         builder: (context) => OverlayPiece(
