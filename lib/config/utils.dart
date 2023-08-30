@@ -72,29 +72,29 @@ class Utils {
       case EnumBoardPiece.suggested:
         return const CellSuggested();
       case EnumBoardPiece.whiteKing:
-        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.whiteQueen:
-        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.whiteBishop:
-        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.whiteKnight:
-        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.whiteRook:
-        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.whitePawn:
-        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Constants.colorSecondary);
+        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Constants.colorPrimary);
       case EnumBoardPiece.blackKing:
-        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessKing, cellSize, color: Colors.grey[800]!);
       case EnumBoardPiece.blackQueen:
-        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessQueen, cellSize, color: Colors.grey[800]!);
       case EnumBoardPiece.blackBishop:
-        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessBishop, cellSize, color: Colors.grey[800]!);
       case EnumBoardPiece.blackKnight:
-        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessKnight, cellSize, color: Colors.grey[800]!);
       case EnumBoardPiece.blackRook:
-        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessRook, cellSize, color: Colors.grey[800]!);
       case EnumBoardPiece.blackPawn:
-        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Colors.black);
+        return iconWidget(FontAwesomeIcons.solidChessPawn, cellSize, color: Colors.grey[800]!);
     }
   }
 

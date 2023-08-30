@@ -29,7 +29,10 @@ class ProvGame extends ChangeNotifier {
 
   EnumGameMode enumGameMode = EnumGameMode.normal;
   bool isDeveloperMode = false;
-  
+
+  bool isFlying = false;
+  bool isBlackTurn = false;
+
   void updateGameMode(EnumGameMode enumGameMode, {bool shouldNotify = true}) {
     this.enumGameMode = enumGameMode;
     notifyListeners();
@@ -47,6 +50,7 @@ class ProvGame extends ChangeNotifier {
   }
 
   void onCellTapped(int x, int y, BuildContext context) {
+    if (isBlackTurn) return;
     final oldPosition = selectedPiece.position?.copyWith();
     // if in create mode and not creator play mode
     if (enumGameMode == EnumGameMode.creatorCreate) {
@@ -105,19 +109,21 @@ class ProvGame extends ChangeNotifier {
 
         //Gravity Check !
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+          isFlying = true;
           // New Gravity check
           final ModelPosition newPosition = await gravitycheck(context, ModelPosition(finalDestination.x, finalDestination.y));
+          isFlying = false;
           if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
             selectedPiece.isSelected = true;
             selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
             selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
             stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
 
+            checkIfBlackCanKill();
             updateSuggestions();
             buttonCheckForDestination();
-            WidgetsBinding.instance.addPostFrameCallback((a) {
-              checkIfBlackCanKill();
-            });
+            // WidgetsBinding.instance.addPostFrameCallback((a) {
+            // });
           }
         });
       }
@@ -125,9 +131,9 @@ class ProvGame extends ChangeNotifier {
       removeSuggestions();
     }
     // Check if any black piece can kill the white piece
-    WidgetsBinding.instance.addPostFrameCallback((a) {
+    // WidgetsBinding.instance.addPostFrameCallback((a) {
+    // });
       checkIfBlackCanKill();
-    });
   }
 
   // Check when a piece has some other piece on top of it
@@ -145,6 +151,7 @@ class ProvGame extends ChangeNotifier {
 
   void checkIfBlackCanKill() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      isBlackTurn = true;
       for (int my = 0; my < Constants.numVerticalBoxes; my++) {
         for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
           if (board[my][mx][0].isPieceBlack()) {
@@ -158,12 +165,15 @@ class ProvGame extends ChangeNotifier {
                 board[my][mx][0] = EnumBoardPiece.blank;
                 removeSuggestions(shouldNotify: false);
                 notifyListeners();
+                isBlackTurn = false;
                 return;
               }
             }
           }
         }
       }
+      isBlackTurn = false;
+      log("isBlackTurn $isBlackTurn");
     });
   }
 
@@ -297,11 +307,13 @@ class ProvGame extends ChangeNotifier {
     if (!(endPos.y + 1 != 10 && (board[endPos.y + 1][endPos.x][0].isEmpty() || board[endPos.y + 1][endPos.x][0].isPieceBlack() || board[endPos.y + 1][endPos.x].cellContains(EnumBoardPiece.key)))) {
       return endPos;
     }
-    if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step) || board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.lock) || board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.doorActivated)) {
+    if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step) ||
+        board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.lock) ||
+        board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.doorActivated)) {
       log("ca");
       return endPos;
     }
-   
+
     log("c1 $endPos");
     //Get old piece
     EnumBoardPiece piece = board[endPos.y][endPos.x][0];

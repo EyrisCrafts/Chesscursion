@@ -20,6 +20,8 @@ import 'package:wakelock/wakelock.dart';
 //TODO
 // Fix music bug
 // Take pictures of app
+// Quick move before kill bug
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<ProvUser>(
