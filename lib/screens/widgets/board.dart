@@ -169,6 +169,7 @@ class Board extends StatelessWidget {
                           Expanded(
                             child: CustomIconButton(
                               onPressed: () {
+                                if (GetIt.I<ProvGame>().isFlying) return;
                                 ProvGame prov = context.read<ProvGame>();
                                 prov.setLevel(prov.currentLevel);
                               },
@@ -194,8 +195,7 @@ class Board extends StatelessWidget {
                                 // Toast if no white king
                                 CustomToast.showToast("Must have at least one black king", leadingIcon: const Icon(Icons.warning, color: Constants.colorSecondary));
                               } else {
-                                GetIt.I<ProvCreator>().setCreatorMode(
-                                    enumGameMode: gameMode == EnumGameMode.creatorCreate ? EnumGameMode.creatorPlay : EnumGameMode.creatorCreate, shouldNotify: true);
+                                GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: gameMode == EnumGameMode.creatorCreate ? EnumGameMode.creatorPlay : EnumGameMode.creatorCreate, shouldNotify: true);
                               }
                             },
                             icon: FontAwesomeIcons.play);
@@ -207,6 +207,7 @@ class Board extends StatelessWidget {
                     if (enumGameMode.isCreaterMode())
                       CustomIconButton(
                           onPressed: () {
+                            
                             if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.creatorPlay) {
                               GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
                               GetIt.I<ProvCreator>().resetBoard();
@@ -283,7 +284,6 @@ class Board extends StatelessWidget {
                                 ),
                               );
                             })),
-                    
                   ])),
             )
         ],

@@ -43,6 +43,7 @@ class Cell extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(color: ((index + (index ~/ Constants.numHorizontalBoxes)) % 2) == 0 ? Constants.cellColorLight : Constants.cellColorDark),
         child: Stack(
+          alignment: Alignment.center,
           children: List.generate(stackContent.length, (index) => Utils.getIcon(stackContent[index], cellSize)),
         ),
       ),
@@ -58,37 +59,20 @@ class CellSuggested extends StatefulWidget {
 }
 
 class _CellSuggestedState extends State<CellSuggested> {
-  double visibilty = 1;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      toggleVisibilty();
-    });
-  }
-
-  void toggleVisibilty() async {
-    await Future.delayed(const Duration(milliseconds: 1000), () {
-      if (mounted) {
-        setState(() {
-          visibilty = visibilty == 0 ? 1 : 0;
-        });
-      }
-    });
-    if (mounted) {
-      toggleVisibilty();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     double cellSize = context.read<ProvPrefs>().cellSize;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 1000),
-      height: cellSize - 10,
-      width: cellSize - 10,
-      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.3 * (visibilty + 0.1)), shape: BoxShape.circle),
+   
+    return Container(
+      height: cellSize,
+      width: cellSize,
+      alignment: Alignment.center,
+      child: Container(
+        height: 10,
+        width: 10,
+        decoration: const BoxDecoration(color: Constants.colorPrimary, shape: BoxShape.circle)
+      ),
     );
   }
 }
