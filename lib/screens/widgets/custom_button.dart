@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chesscursion_creator/config/constants.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class CustomButton extends StatefulWidget {
   const CustomButton({super.key, required this.text, required this.onPressed, this.width = 200, this.fontSize = 22, this.inverseColors = false, this.isSelected = false});
@@ -19,7 +21,10 @@ class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onPressed,
+      onTap: () {
+        GetIt.I<ProvMusic>().buttonPressed();
+        widget.onPressed();
+      },
       child: Container(
         width: widget.width,
         alignment: Alignment.center,

@@ -3,6 +3,7 @@ import 'package:chesscursion_creator/firebase_options.dart';
 import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
@@ -20,8 +21,8 @@ import 'package:wakelock/wakelock.dart';
 //TODO
 // Fix music bug
 // Take pictures of app
-// Quick move before kill bug
-
+// Creator not working sometime
+// level 19, when you take key, everything floats. Do a gravity check
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
@@ -63,6 +64,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<ProvCreator>(
             create: (context) => GetIt.I<ProvCreator>(),
+          ),
+          ChangeNotifierProvider<ProvMusic>(
+            create: (context) => GetIt.I<ProvMusic>(),
           ),
         ],
         child: MaterialApp(
