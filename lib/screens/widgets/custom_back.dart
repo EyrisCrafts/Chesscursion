@@ -1,5 +1,7 @@
 import 'package:chesscursion_creator/config/constants.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class CustomBack extends StatelessWidget {
   const CustomBack({super.key});
@@ -8,6 +10,7 @@ class CustomBack extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        GetIt.I<ProvMusic>().buttonPressed();
         Navigator.pop(context);
       },
       child: Container(

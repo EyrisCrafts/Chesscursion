@@ -12,6 +12,7 @@ import 'package:chesscursion_creator/overlays/overlay_pawn_promotion.dart';
 import 'package:chesscursion_creator/overlays/overlay_piece.dart';
 import 'package:chesscursion_creator/overlays/overlay_won.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -85,9 +86,11 @@ class ProvGame extends ChangeNotifier {
 
         // if destination is not a black piece, play move sound
         if (!board[finalDestination.y][finalDestination.x][0].isPieceBlack()) {
-          audioPlayMove();
+          // audioPlayMove();
+          GetIt.I<ProvMusic>().move();
         } else {
-          audioPlayMove(isKill: true);
+          GetIt.I<ProvMusic>().kill();
+          // audioPlayMove(isKill: true);
         }
 
         if (board[finalDestination.y][finalDestination.x].cellContains(EnumBoardPiece.key)) {
@@ -133,7 +136,7 @@ class ProvGame extends ChangeNotifier {
     // Check if any black piece can kill the white piece
     // WidgetsBinding.instance.addPostFrameCallback((a) {
     // });
-      checkIfBlackCanKill();
+    checkIfBlackCanKill();
   }
 
   // Check when a piece has some other piece on top of it
@@ -159,7 +162,8 @@ class ProvGame extends ChangeNotifier {
             for (ModelPosition pos in possibles) {
               if (pos.x == selectedPiece.position!.x && pos.y == selectedPiece.position!.y) {
                 // If destination is not a black piece, play move sound
-                audioPlayMove(isKill: true);
+                // audioPlayMove(isKill: true);
+                GetIt.I<ProvMusic>().kill();
 
                 board[selectedPiece.position!.y][selectedPiece.position!.x][0] = board[my][mx][0];
                 board[my][mx][0] = EnumBoardPiece.blank;
@@ -173,7 +177,6 @@ class ProvGame extends ChangeNotifier {
         }
       }
       isBlackTurn = false;
-      log("isBlackTurn $isBlackTurn");
     });
   }
 
@@ -265,6 +268,7 @@ class ProvGame extends ChangeNotifier {
     checkingWinCondition = true;
     await Future.delayed(const Duration(milliseconds: 200));
     if (!kingExists()) {
+      GetIt.I<ProvMusic>().win();
       OverlayEntry entry = OverlayEntry(builder: (context) => const OverlayWon());
       Overlay.of(context).insert(entry);
       await Future.delayed(const Duration(milliseconds: 2000), () {
@@ -344,12 +348,14 @@ class ProvGame extends ChangeNotifier {
     await Future.delayed(const Duration(milliseconds: 599), () {
       isMoveAnimationInProgress = false;
       if (board[newY][endPos.x][0].isPieceBlack()) {
-        audioPlayMove(isKill: true);
+        // audioPlayMove(isKill: true);
+        GetIt.I<ProvMusic>().kill();
       }
 
       if (board[newY][endPos.x].cellContains(EnumBoardPiece.key)) {
         // TODO Key sound
-        audioPlayMove(isKill: true);
+        // audioPlayMove(isKill: true);
+        
         // remove all locks
         removeAllLocks();
       }
@@ -363,6 +369,7 @@ class ProvGame extends ChangeNotifier {
 
   // Remove all keys and locks
   void removeAllLocks() {
+    GetIt.I<ProvMusic>().key();
     for (int my = 0; my < 10; my++) {
       for (int mx = 0; mx < Constants.numHorizontalBoxes; mx++) {
         if (board[my][mx].cellContains(EnumBoardPiece.lock) || board[my][mx].cellContains(EnumBoardPiece.key)) {

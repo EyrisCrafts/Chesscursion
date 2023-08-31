@@ -10,6 +10,7 @@ import 'package:chesscursion_creator/overlays/overlay_share_level.dart';
 import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/widgets/Custom_icon_button.dart';
@@ -154,13 +155,12 @@ class Board extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Selector<ProvGame, bool>(
-                                selector: (p0, p1) => p1.isMusicAllowed,
+                            child: Selector<ProvMusic, bool>(
+                                selector: (p0, p1) => p1.isMusicOn,
                                 builder: (context, isMusicAllowed, _) {
                                   return CustomIconButton(
                                     onPressed: () {
-                                      ProvGame prov = context.read<ProvGame>();
-                                      // prov.switchMusic();
+                                      GetIt.I<ProvMusic>().toggleMusic();
                                     },
                                     icon: isMusicAllowed ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark,
                                   );
@@ -207,7 +207,6 @@ class Board extends StatelessWidget {
                     if (enumGameMode.isCreaterMode())
                       CustomIconButton(
                           onPressed: () {
-                            
                             if (GetIt.I<ProvGame>().enumGameMode == EnumGameMode.creatorPlay) {
                               GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate);
                               GetIt.I<ProvCreator>().resetBoard();

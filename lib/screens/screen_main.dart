@@ -1,9 +1,13 @@
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/screens/screen_community.dart';
 import 'package:chesscursion_creator/screens/screen_levels.dart';
+import 'package:chesscursion_creator/screens/widgets/Custom_icon_button.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class ScreenMain extends StatefulWidget {
   const ScreenMain({super.key});
@@ -18,6 +22,7 @@ class _ScreenMainState extends State<ScreenMain> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // GetIt.I<ProvGame>().switchMusic();
+      GetIt.I<ProvMusic>().playBackgroundMusic();
     });
   }
 
@@ -43,6 +48,27 @@ class _ScreenMainState extends State<ScreenMain> {
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               )),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Selector<ProvMusic, bool>(
+              selector: (p0, p1) => p1.isMusicOn,
+              builder: (context, isMusicAllowed, _) {
+                return Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: SizedBox(
+                    // height: 50,
+                    // width: 50,
+                    child: CustomIconButton(
+                      defaultSize: false,
+                      onPressed: () {
+                        GetIt.I<ProvMusic>().toggleMusic();
+                      },
+                      icon: isMusicAllowed ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark,
+                    ),
+                  ),
+                );
+              }),
         ),
         Center(
           child: Column(

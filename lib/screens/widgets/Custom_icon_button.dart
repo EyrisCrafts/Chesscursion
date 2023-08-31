@@ -2,10 +2,11 @@ import 'package:chesscursion_creator/config/constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomIconButton extends StatelessWidget {
-  const CustomIconButton({super.key, required this.onPressed, required this.icon, this.isSelected = false});
+  const CustomIconButton({super.key, required this.onPressed, required this.icon, this.isSelected = false, this.defaultSize = true});
   final Function() onPressed;
   final IconData icon;
   final bool isSelected;
+  final bool defaultSize;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,8 @@ class CustomIconButton extends StatelessWidget {
         onTap: onPressed,
         child: Container(
             alignment: Alignment.center,
+            height: defaultSize ? null : 45,
+            width: defaultSize ? null : 45,
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -26,8 +29,8 @@ class CustomIconButton extends StatelessWidget {
               color: isSelected ? Constants.cellColorDark : Colors.white,
               shape: BoxShape.circle,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Icon(icon, size: (constraints.maxWidth / 3) / 2, color: isSelected ? Colors.white : Constants.colorSecondary)),
+            padding: defaultSize ?  const EdgeInsets.symmetric(horizontal: 15, vertical: 15) : null,
+            child: Icon(icon, size: defaultSize ? (constraints.maxWidth / 3) / 2 : 15, color: isSelected ? Colors.white : Constants.colorSecondary)),
       );
     });
   }

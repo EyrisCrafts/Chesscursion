@@ -3,6 +3,7 @@ import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/local_data.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/screen_creator.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
@@ -91,6 +92,7 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                           return ItemLevel(
                               onTap: () {
                                 if (isLocked) return;
+                                GetIt.I<ProvMusic>().buttonPressed();
                                 GetIt.I<ProvGame>().setLevel(index);
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenGame()));
                               },

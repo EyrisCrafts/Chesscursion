@@ -106,6 +106,14 @@ flutter:
     - assets/svgs/button_pressed.svg
     - assets/svgs/button_unpressed.svg
     - assets/
+    
+    # Sounds
+    - assets/sounds/background.mp3
+    - assets/sounds/win.mp3
+    - assets/sounds/kill.wav
+    - assets/sounds/move.wav
+    - assets/sounds/button.wav
+    - assets/sounds/key.wav
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
