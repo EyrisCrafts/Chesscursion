@@ -383,7 +383,7 @@ class ProvGame extends ChangeNotifier {
             ));
     Overlay.of(context).insert(entry);
     isMoveAnimationInProgress = true;
-    await Future.delayed(const Duration(milliseconds: 599), () {
+    await Future.delayed(const Duration(milliseconds: 350), () {
       isMoveAnimationInProgress = false;
       if (board[newY][endPos.x][0].isPieceBlack()) {
         // audioPlayMove(isKill: true);

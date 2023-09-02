@@ -43,7 +43,7 @@ class _OverlayPieceState extends State<OverlayPiece> {
   Widget build(BuildContext context) {
     double cellSize = context.read<ProvPrefs>().cellSize;
     return AnimatedPositioned(
-        duration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.decelerate,
         top: top,
         left: left,

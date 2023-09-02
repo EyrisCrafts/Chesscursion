@@ -87,8 +87,8 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                       itemCount: LocalData.levels.length,
                       itemBuilder: (context, index) {
                         return Consumer<ProvUser>(builder: (context, provUser, _) {
-                          final isLocked = false;
-                          // final isLocked = provUser.levelsCompleted < index;
+                          // final isLocked = false;
+                          final isLocked = provUser.levelsCompleted < index;
                           return ItemLevel(
                               onTap: () {
                                 if (isLocked) return;
