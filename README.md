@@ -10,15 +10,18 @@ A chess based puzzle game
 Your browser does not support the video tag.
 </video>
 
+### You can either play normal levels or community created
 ![alt text](./screenshots/ss1.jpg)
-*You can either play normal levels or community created*
-![alt text](./screenshots/ss2.jpg)
-*A large variety of levels*
-![alt text](./screenshots/ss3.jpg)
-*Complicated levels*
-![alt text](./screenshots/ss4.jpg)
-*Create your own levels and share !*
 
+### A large variety of levels
+![alt text](./screenshots/ss2.jpg)
+
+### Complicated levels
+![alt text](./screenshots/ss3.jpg)
+
+
+### Create your own levels and share !
+![alt text](./screenshots/ss4.jpg)
 
 # 🔥 Contributions
 
