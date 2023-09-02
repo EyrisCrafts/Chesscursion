@@ -1,16 +1,29 @@
-# chesscursion_creator
+# 👑 Chesscursion
 
-"A new Flutter project."
+A chess based puzzle game
 
-## Getting Started
+# 💻 Screenshots
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+<video width="500" height="300" controls>
+  <source src="./screenshots/sr1.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![alt text](./screenshots/ss1.jpg)
+*You can either play normal levels or community created*
+![alt text](./screenshots/ss2.jpg)
+*A large variety of levels*
+![alt text](./screenshots/ss3.jpg)
+*Complicated levels*
+![alt text](./screenshots/ss4.jpg)
+*Create your own levels and share !*
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+# 🔥 Contributions
+
+PRs are always welcome :)
+
+# 👾 Disclaimer
+
+Chesscursion is inspired from Chessformer. I've added upon the concept with a few of my changes : )

@@ -20,11 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 //TODO
-// Fix music bug
 // Take pictures of app
-// Creator not working sometime
-// After level 24, show go to community
-// Stop music when app in background or killed or something
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

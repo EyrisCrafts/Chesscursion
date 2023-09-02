@@ -19,33 +19,36 @@ class ProvMusic extends ChangeNotifier {
   }
 
   void move() {
+    if (!isMusicOn) return;
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/move2.mp3"));
   }
 
   void key() {
+    if (!isMusicOn) return;
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/key.wav"));
   }
 
   void win() {
+    if (!isMusicOn) return;
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/win.mp3"));
   }
 
   void kill() {
+    if (!isMusicOn) return;
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/kill.wav"));
   }
 
   void buttonPressed() {
+    if (!isMusicOn) return;
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/button.wav"));
   }
 
   void playBackgroundMusic() {
-    return;
-    if (isMusicOn) return;
     isMusicOn = true;
     audioBackground.setReleaseMode(ReleaseMode.loop);
     audioBackground.play(AssetSource("sounds/background.mp3"));

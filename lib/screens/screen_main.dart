@@ -23,7 +23,6 @@ class _ScreenMainState extends State<ScreenMain> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // GetIt.I<ProvGame>().switchMusic();
       GetIt.I<ProvMusic>().playBackgroundMusic();
     });
   }
