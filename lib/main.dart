@@ -30,7 +30,7 @@ void main() async {
   GetIt.I<ProvUser>().init();
   Wakelock.enable();
 
-  WidgetsBinding.instance.addObserver(MusicHandler());
+  // WidgetsBinding.instance.addObserver(MusicHandler());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

@@ -21,7 +21,16 @@ class ScreenLevels extends StatefulWidget {
   State<ScreenLevels> createState() => _ScreenLevelsState();
 }
 
-class _ScreenLevelsState extends State<ScreenLevels> {
+class _ScreenLevelsState extends State<ScreenLevels> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      GetIt.I<ProvMusic>().resumeMusic();
+    } else {
+      GetIt.I<ProvMusic>().pauseMusic();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -69,7 +78,6 @@ class _ScreenLevelsState extends State<ScreenLevels> {
                               GetIt.I<ProvCreator>().restartBoard();
                               GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate, shouldNotify: false);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const ScreenCreator()));
-                              
                             })
                       ],
                     ),

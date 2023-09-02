@@ -120,13 +120,13 @@ class ProvGame extends ChangeNotifier {
 
           ModelPosition? possibleGravityPosition = checkIfGravityPossible();
           ModelPosition? tmpGravityPosition = possibleGravityPosition?.copyWith();
-
           do {
             if (possibleGravityPosition != null) {
               // check if nothing below a piece
               if ((board[possibleGravityPosition.y][possibleGravityPosition.x][0].isPieceWhite() || board[possibleGravityPosition.y][possibleGravityPosition.x][0].isPieceBlack()) &&
                   (possibleGravityPosition.y + 1).isWithinVerticalBounds() &&
                   board[possibleGravityPosition.y + 1][possibleGravityPosition.x][0].isEmpty()) {
+                log("gravitycheck going down starting from $possibleGravityPosition");
                 // New Gravity check
                 final ModelPosition newPosition = await gravitycheck(context, possibleGravityPosition);
 
@@ -140,22 +140,21 @@ class ProvGame extends ChangeNotifier {
 
               tmpGravityPosition = possibleGravityPosition.copyWith();
               possibleGravityPosition = checkIfGravityPossible();
-              log("possibleGravityPosition $possibleGravityPosition" + " tmpGravityPosition $tmpGravityPosition");
             }
           } while (possibleGravityPosition != null && tmpGravityPosition != possibleGravityPosition);
 
           isFlying = false;
 
-            // Select
-            if (board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0].isPieceWhite()) {
-              selectedPiece.isSelected = true;
-              selectedPiece.selectedPiece = board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0];
-              selectedPiece.position = ModelPosition(afterGravityPositionOfMovedPieceX, afterGravityPositionOfMovedPieceY);
-              stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
+          // Select
+          if (board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0].isPieceWhite()) {
+            selectedPiece.isSelected = true;
+            selectedPiece.selectedPiece = board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0];
+            selectedPiece.position = ModelPosition(afterGravityPositionOfMovedPieceX, afterGravityPositionOfMovedPieceY);
+            stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
 
-              updateSuggestions();
-            }
-            winCheckCondition(context);
+            updateSuggestions();
+          }
+          winCheckCondition(context);
         });
       }
       selectedPiece.isSelected = false;
@@ -168,8 +167,11 @@ class ProvGame extends ChangeNotifier {
   ModelPosition? checkIfGravityPossible() {
     for (int i = 0; i < Constants.numHorizontalBoxes; i++) {
       for (int j = 0; j < Constants.numVerticalBoxes; j++) {
-        // check if nothing below a piece
-        if ((board[j][i][0].isPieceWhite() || board[j][i][0].isPieceBlack()) && (j + 1).isWithinVerticalBounds() && board[j + 1][i][0].isEmpty()) {
+        // check if nothing below a piece. No Step, no black and no lock and no door
+        if ((board[j][i][0].isPieceWhite() || board[j][i][0].isPieceBlack()) && (j + 1).isWithinVerticalBounds() && board[j + 1][i][0].isEmpty() 
+        && !board[j+1][i].cellContains(EnumBoardPiece.step) && !board[j+1][i].cellContains(EnumBoardPiece.lock) && !board[j+1][i].cellContains(EnumBoardPiece.doorActivated)
+        ) {
+          
           return ModelPosition(i, j);
         }
       }
@@ -352,11 +354,9 @@ class ProvGame extends ChangeNotifier {
     if (board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.step) ||
         board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.lock) ||
         board[endPos.y + 1][endPos.x].contains(EnumBoardPiece.doorActivated)) {
-      log("ca");
       return endPos;
     }
 
-    log("c1 $endPos");
     //Get old piece
     EnumBoardPiece piece = board[endPos.y][endPos.x][0];
     board[endPos.y][endPos.x][0] = EnumBoardPiece.blank;
@@ -421,7 +421,6 @@ class ProvGame extends ChangeNotifier {
   bool isMoveAnimationInProgress = false;
 
   void removeSuggestions({bool shouldNotify = true}) {
-    log("Removing suggestions");
     for (int i = 0; i < Constants.numVerticalBoxes; i++) {
       for (int j = 0; j < Constants.numHorizontalBoxes; j++) {
         board[i][j].removeWhere((element) => element == EnumBoardPiece.suggested);

@@ -9,6 +9,7 @@ import 'package:chesscursion_creator/models/model_community_level.dart';
 import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/screens/screen_creator.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/widgets/custom_back.dart';
@@ -28,7 +29,16 @@ class ScreenCommunity extends StatefulWidget {
   State<ScreenCommunity> createState() => _ScreenCommunityState();
 }
 
-class _ScreenCommunityState extends State<ScreenCommunity> {
+class _ScreenCommunityState extends State<ScreenCommunity> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      GetIt.I<ProvMusic>().resumeMusic();
+    } else {
+      GetIt.I<ProvMusic>().pauseMusic();
+    }
+  }
+
   @override
   void initState() {
     GetIt.I<ProvCommunity>().loadCommunityLevels().then((value) {

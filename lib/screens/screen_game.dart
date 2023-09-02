@@ -4,6 +4,7 @@ import 'package:chesscursion_creator/config/utils.dart';
 import 'package:chesscursion_creator/models/model_community_level.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/screens/widgets/board.dart';
 import 'package:chesscursion_creator/screens/widgets/cell.dart';
@@ -18,7 +19,16 @@ class ScreenGame extends StatefulWidget {
   State<ScreenGame> createState() => _ScreenGameState();
 }
 
-class _ScreenGameState extends State<ScreenGame> {
+class _ScreenGameState extends State<ScreenGame> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      GetIt.I<ProvMusic>().resumeMusic();
+    } else {
+      GetIt.I<ProvMusic>().pauseMusic();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +42,6 @@ class _ScreenGameState extends State<ScreenGame> {
     if (widget.communityLevel != null) {
       GetIt.I<ProvGame>().setBoard(Utils.convertBoard(widget.communityLevel!.board), shouldNotify: false);
     }
-    
   }
 
   @override
@@ -41,7 +50,10 @@ class _ScreenGameState extends State<ScreenGame> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-             Expanded(child: Board(communityLevel: widget.communityLevel,)),
+            Expanded(
+                child: Board(
+              communityLevel: widget.communityLevel,
+            )),
             if (GetIt.I<ProvGame>().enumGameMode.isCreaterMode())
               Container(
                   height: 100,

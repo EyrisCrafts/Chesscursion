@@ -27,7 +27,14 @@ class _ScreenMainState extends State<ScreenMain> with WidgetsBindingObserver {
     });
   }
 
-  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      GetIt.I<ProvMusic>().resumeMusic();
+    } else {
+      GetIt.I<ProvMusic>().pauseMusic();
+    }
+  }
 
   @override
   void dispose() {

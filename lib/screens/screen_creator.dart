@@ -4,6 +4,7 @@ import 'package:chesscursion_creator/config/enums.dart';
 import 'package:chesscursion_creator/config/extensions.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
+import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/providers/prov_prefs.dart';
 import 'package:chesscursion_creator/screens/widgets/board.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,16 @@ class ScreenCreator extends StatefulWidget {
   State<ScreenCreator> createState() => _ScreenCreatorState();
 }
 
-class _ScreenCreatorState extends State<ScreenCreator> {
+class _ScreenCreatorState extends State<ScreenCreator> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      GetIt.I<ProvMusic>().resumeMusic();
+    } else {
+      GetIt.I<ProvMusic>().pauseMusic();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
