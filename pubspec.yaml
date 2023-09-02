@@ -112,6 +112,7 @@ flutter:
     - assets/sounds/win.mp3
     - assets/sounds/kill.wav
     - assets/sounds/move.wav
+    - assets/sounds/move2.mp3
     - assets/sounds/button.wav
     - assets/sounds/key.wav
 

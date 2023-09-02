@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chesscursion_creator/providers/prov_music.dart';
 import 'package:chesscursion_creator/screens/screen_community.dart';
 import 'package:chesscursion_creator/screens/screen_levels.dart';
@@ -16,7 +18,7 @@ class ScreenMain extends StatefulWidget {
   State<ScreenMain> createState() => _ScreenMainState();
 }
 
-class _ScreenMainState extends State<ScreenMain> {
+class _ScreenMainState extends State<ScreenMain> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -26,9 +28,12 @@ class _ScreenMainState extends State<ScreenMain> {
     });
   }
 
+  
+
   @override
   void dispose() {
-    // GetIt.I<ProvGame>().stopMusic();
+    log("stopping music");
+    GetIt.I<ProvMusic>().disposeMusic();
     super.dispose();
   }
 

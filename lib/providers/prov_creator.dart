@@ -17,6 +17,7 @@ class ProvCreator extends ChangeNotifier {
   List<List<List<EnumBoardPiece>>> tmpBoard = [];
 
   void setCreatorMode({EnumGameMode enumGameMode = EnumGameMode.normal, bool shouldNotify = true}) {
+    log("setCreatorMode: $shouldNotify");
     GetIt.I<ProvGame>().updateGameMode(enumGameMode, shouldNotify: shouldNotify);
     if (enumGameMode == EnumGameMode.creatorPlay) {
       tmpBoard = [];

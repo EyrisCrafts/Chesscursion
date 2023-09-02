@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +20,9 @@ class ProvMusic extends ChangeNotifier {
 
   void move() {
     audioMove.setReleaseMode(ReleaseMode.release);
-    audioMove.play(AssetSource("sounds/move.wav"));
+    audioMove.play(AssetSource("sounds/move2.mp3"));
   }
-  
+
   void key() {
     audioMove.setReleaseMode(ReleaseMode.release);
     audioMove.play(AssetSource("sounds/key.wav"));
@@ -42,6 +44,7 @@ class ProvMusic extends ChangeNotifier {
   }
 
   void playBackgroundMusic() {
+    return;
     if (isMusicOn) return;
     isMusicOn = true;
     audioBackground.setReleaseMode(ReleaseMode.loop);
@@ -57,9 +60,27 @@ class ProvMusic extends ChangeNotifier {
     }
   }
 
+  void pauseMusic() {
+    audioBackground.pause();
+    isMusicOn = false;
+    notifyListeners();
+  }
+
+  void resumeMusic() {
+    audioBackground.resume();
+    isMusicOn = true;
+    notifyListeners();
+  }
+
   void stopMusic() async {
     await audioBackground.stop();
     isMusicOn = false;
     notifyListeners();
+  }
+
+  void disposeMusic() {
+    log("stopping music");
+    audioBackground.stop();
+    audioBackground.dispose();
   }
 }
