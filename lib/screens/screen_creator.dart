@@ -28,7 +28,7 @@ class _ScreenCreatorState extends State<ScreenCreator> {
     return WillPopScope(
       onWillPop: () async {
         if (GetIt.I<ProvGame>().enumGameMode.isCreaterMode()) {
-          GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.normal);
+          GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.normal, shouldNotify: false);
           return true;
         }
         return true;

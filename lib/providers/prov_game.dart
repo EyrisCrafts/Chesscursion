@@ -36,7 +36,9 @@ class ProvGame extends ChangeNotifier {
 
   void updateGameMode(EnumGameMode enumGameMode, {bool shouldNotify = true}) {
     this.enumGameMode = enumGameMode;
-    notifyListeners();
+    if (shouldNotify) {
+      notifyListeners();
+    }
   }
 
   bool isPieceOnBoard(EnumBoardPiece piece) {
@@ -113,30 +115,66 @@ class ProvGame extends ChangeNotifier {
         //Gravity Check !
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
           isFlying = true;
-          // New Gravity check
-          final ModelPosition newPosition = await gravitycheck(context, ModelPosition(finalDestination.x, finalDestination.y));
-          isFlying = false;
-          if (board[newPosition.y][newPosition.x][0].isPieceWhite()) {
-            selectedPiece.isSelected = true;
-            selectedPiece.selectedPiece = board[newPosition.y][newPosition.x][0];
-            selectedPiece.position = ModelPosition(newPosition.x, newPosition.y);
-            stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
+          int afterGravityPositionOfMovedPieceY = finalDestination.y;
+          int afterGravityPositionOfMovedPieceX = finalDestination.x;
 
-            checkIfBlackCanKill();
-            updateSuggestions();
-            buttonCheckForDestination();
-            // WidgetsBinding.instance.addPostFrameCallback((a) {
-            // });
-          }
+          ModelPosition? possibleGravityPosition = checkIfGravityPossible();
+          ModelPosition? tmpGravityPosition = possibleGravityPosition?.copyWith();
+
+          do {
+            if (possibleGravityPosition != null) {
+              // check if nothing below a piece
+              if ((board[possibleGravityPosition.y][possibleGravityPosition.x][0].isPieceWhite() || board[possibleGravityPosition.y][possibleGravityPosition.x][0].isPieceBlack()) &&
+                  (possibleGravityPosition.y + 1).isWithinVerticalBounds() &&
+                  board[possibleGravityPosition.y + 1][possibleGravityPosition.x][0].isEmpty()) {
+                // New Gravity check
+                final ModelPosition newPosition = await gravitycheck(context, possibleGravityPosition);
+
+                checkIfBlackCanKill();
+                buttonCheckForDestination();
+                if (possibleGravityPosition.x == finalDestination.x && possibleGravityPosition.y == finalDestination.y && board[newPosition.y][newPosition.x][0].isPieceWhite()) {
+                  afterGravityPositionOfMovedPieceY = newPosition.y;
+                  afterGravityPositionOfMovedPieceX = newPosition.x;
+                }
+              }
+
+              tmpGravityPosition = possibleGravityPosition.copyWith();
+              possibleGravityPosition = checkIfGravityPossible();
+              log("possibleGravityPosition $possibleGravityPosition" + " tmpGravityPosition $tmpGravityPosition");
+            }
+          } while (possibleGravityPosition != null && tmpGravityPosition != possibleGravityPosition);
+
+          isFlying = false;
+
+            // Select
+            if (board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0].isPieceWhite()) {
+              selectedPiece.isSelected = true;
+              selectedPiece.selectedPiece = board[afterGravityPositionOfMovedPieceY][afterGravityPositionOfMovedPieceX][0];
+              selectedPiece.position = ModelPosition(afterGravityPositionOfMovedPieceX, afterGravityPositionOfMovedPieceY);
+              stackingGravityCheck(ModelPosition(oldPosition!.x, oldPosition.y));
+
+              updateSuggestions();
+            }
+            winCheckCondition(context);
         });
       }
       selectedPiece.isSelected = false;
       removeSuggestions();
     }
     // Check if any black piece can kill the white piece
-    // WidgetsBinding.instance.addPostFrameCallback((a) {
-    // });
     checkIfBlackCanKill();
+  }
+
+  ModelPosition? checkIfGravityPossible() {
+    for (int i = 0; i < Constants.numHorizontalBoxes; i++) {
+      for (int j = 0; j < Constants.numVerticalBoxes; j++) {
+        // check if nothing below a piece
+        if ((board[j][i][0].isPieceWhite() || board[j][i][0].isPieceBlack()) && (j + 1).isWithinVerticalBounds() && board[j + 1][i][0].isEmpty()) {
+          return ModelPosition(i, j);
+        }
+      }
+    }
+    return null;
   }
 
   // Check when a piece has some other piece on top of it
@@ -355,14 +393,13 @@ class ProvGame extends ChangeNotifier {
       if (board[newY][endPos.x].cellContains(EnumBoardPiece.key)) {
         // TODO Key sound
         // audioPlayMove(isKill: true);
-        
+
         // remove all locks
         removeAllLocks();
       }
       board[newY][endPos.x][0] = piece;
       notifyListeners();
       entry.remove();
-      winCheckCondition(context);
     });
     return ModelPosition(endPos.x, newY);
   }

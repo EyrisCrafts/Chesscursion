@@ -1,5 +1,6 @@
 import 'package:chesscursion_creator/config/service_locator.dart';
 import 'package:chesscursion_creator/firebase_options.dart';
+import 'package:chesscursion_creator/music_handler.dart';
 import 'package:chesscursion_creator/providers/prov_community.dart';
 import 'package:chesscursion_creator/providers/prov_creator.dart';
 import 'package:chesscursion_creator/providers/prov_game.dart';
@@ -22,7 +23,9 @@ import 'package:wakelock/wakelock.dart';
 // Fix music bug
 // Take pictures of app
 // Creator not working sometime
-// level 19, when you take key, everything floats. Do a gravity check
+// After level 24, show go to community
+// Stop music when app in background or killed or something
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
@@ -30,6 +33,8 @@ void main() async {
   await GetIt.I<ServiceLocalStorage>().init();
   GetIt.I<ProvUser>().init();
   Wakelock.enable();
+
+  WidgetsBinding.instance.addObserver(MusicHandler());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

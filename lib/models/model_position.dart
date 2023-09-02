@@ -21,12 +21,16 @@ class ModelPosition {
   }
 
   @override
-  bool operator ==(Object other) {
-    return hashCode == other.hashCode;
+  bool operator ==(covariant ModelPosition other) {
+    if (identical(this, other)) return true;
+  
+    return 
+      other.x == x &&
+      other.y == y;
   }
 
   @override
-  int get hashCode => (x.toString() + y.toString()).hashCode;
+  int get hashCode => x.hashCode ^ y.hashCode;
 
   ModelPosition copyWith({
     int? x,
