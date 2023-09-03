@@ -32,6 +32,12 @@ class _ScreenLevelsState extends State<ScreenLevels> with WidgetsBindingObserver
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 

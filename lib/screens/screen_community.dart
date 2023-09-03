@@ -30,6 +30,7 @@ class ScreenCommunity extends StatefulWidget {
 }
 
 class _ScreenCommunityState extends State<ScreenCommunity> with WidgetsBindingObserver {
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -41,6 +42,7 @@ class _ScreenCommunityState extends State<ScreenCommunity> with WidgetsBindingOb
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     GetIt.I<ProvCommunity>().loadCommunityLevels().then((value) {
       if (!value) {
         CustomToast.showToast("Error Loading community");

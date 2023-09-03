@@ -20,6 +20,7 @@ class ScreenGame extends StatefulWidget {
 }
 
 class _ScreenGameState extends State<ScreenGame> with WidgetsBindingObserver {
+  
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -29,9 +30,12 @@ class _ScreenGameState extends State<ScreenGame> with WidgetsBindingObserver {
     }
   }
 
+  
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       GetIt.I<ProvGame>().audioPlayMusic();

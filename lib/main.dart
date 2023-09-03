@@ -10,6 +10,7 @@ import 'package:chesscursion_creator/providers/prov_user.dart';
 import 'package:chesscursion_creator/screens/screen_game.dart';
 import 'package:chesscursion_creator/screens/screen_main.dart';
 import 'package:chesscursion_creator/services/service_local_storage.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,6 +72,9 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          ],
           builder: (context, child) {
             return OKToast(child: child!);
           },

@@ -18,6 +18,7 @@ class ScreenCreator extends StatefulWidget {
 }
 
 class _ScreenCreatorState extends State<ScreenCreator> with WidgetsBindingObserver {
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -30,6 +31,7 @@ class _ScreenCreatorState extends State<ScreenCreator> with WidgetsBindingObserv
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     GetIt.I<ProvCreator>().setCreatorMode(enumGameMode: EnumGameMode.creatorCreate, shouldNotify: false);
   }
 
