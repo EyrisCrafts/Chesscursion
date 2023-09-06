@@ -366,7 +366,7 @@ class ProvGame extends ChangeNotifier {
     // ModelPosition newPos = findBottom(endPos);
     // int newY = newPos.y;
     while (newY + 1 != 10 && (board[newY + 1][endPos.x][0].isEmpty() || board[newY + 1][endPos.x][0].isPieceBlack())) {
-      if (board[newY + 1][endPos.x].cellContains(EnumBoardPiece.step) || board[newY + 1][endPos.x].cellContains(EnumBoardPiece.lock)) {
+      if (board[newY + 1][endPos.x].cellContains(EnumBoardPiece.step) || board[newY + 1][endPos.x].cellContains(EnumBoardPiece.lock) || board[newY + 1][endPos.x].cellContains(EnumBoardPiece.doorActivated)) {
         break;
       }
 
