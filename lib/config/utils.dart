@@ -183,8 +183,12 @@ class Utils {
           return [ModelPosition(position.x, position.y - 1)];
         }
 
-        if (isPieceDestinationValid(board, ModelPosition(position.x, position.y - 1)) && board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)) {
-          return [ModelPosition(position.x, position.y - 1), ModelPosition(position.x, position.y - 2)];
+        if (isPieceDestinationValid(board, ModelPosition(position.x, position.y - 1)) && board[position.y - 1][position.x].cellContains(EnumBoardPiece.step)
+        ) {
+          if (isPieceDestinationValid(board, ModelPosition(position.x, position.y - 2))) {
+            return [ModelPosition(position.x, position.y - 1), ModelPosition(position.x, position.y - 2)];
+          }
+          return [ModelPosition(position.x, position.y - 1)];
         }
 
         return [];
